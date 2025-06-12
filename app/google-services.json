@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "95346719638",
+    "project_id": "hkpetownersapp",
+    "storage_bucket": "hkpetownersapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95346719638:android:9304e48aa492bcb2103bb7",
+        "android_client_info": {
+          "package_name": "com.example.hkpetowners"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh7FasyU-3yeYo8_3Adseii3tvHQzSnvk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
