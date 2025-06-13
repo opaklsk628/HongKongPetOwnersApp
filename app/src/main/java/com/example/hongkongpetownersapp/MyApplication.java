@@ -1,4 +1,4 @@
-package com.example.hongkongpetowners;
+package com.example.hongkongpetownersapp;
 
 import android.app.Application;
 import com.google.firebase.FirebaseApp;

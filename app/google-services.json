@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:95346719638:android:9304e48aa492bcb2103bb7",
+        "mobilesdk_app_id": "1:95346719638:android:f65c46cf2f2f5fc1103bb7",
         "android_client_info": {
-          "package_name": "com.example.hkpetowners"
+          "package_name": "com.example.hongkongpetownersapp"
         }
       },
       "oauth_client": [],

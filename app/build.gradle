@@ -1,14 +1,15 @@
 plugins {
     alias(libs.plugins.android.application)
+    // 添加 Google Services plugin
     id 'com.google.gms.google-services'
 }
 
 android {
-    namespace 'com.example.hongkongpetowners'
+    namespace 'com.example.hongkongpetownersapp'
     compileSdk 35
 
     defaultConfig {
-        applicationId "com.example.hongkongpetowners"
+        applicationId "com.example.hongkongpetownersapp"
         minSdk 31
         targetSdk 35
         versionCode 1
@@ -33,22 +34,23 @@ android {
 }
 
 dependencies {
+    // 原有的依賴
     implementation libs.appcompat
     implementation libs.material
     implementation libs.constraintlayout
     implementation libs.navigation.fragment
     implementation libs.navigation.ui
 
-    // Firebase BOM, control all firebase version
+    // Firebase BOM - 管理所有 Firebase 庫的版本
     implementation platform('com.google.firebase:firebase-bom:32.7.0')
 
-    // Firebase
+    // Firebase 依賴（不需要指定版本，BOM 會自動管理）
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-storage'
 
-    // test
+    // 測試依賴
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

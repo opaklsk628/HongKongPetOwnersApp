@@ -1,4 +1,4 @@
-package com.example.hongkongpetowners;
+package com.example.hongkongpetownersapp;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +15,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.hongkongpetowners.databinding.ActivityMainBinding;
+import com.example.hongkongpetownersapp.databinding.ActivityMainBinding;
 
 import java.util.Date;
 import java.util.HashMap;
