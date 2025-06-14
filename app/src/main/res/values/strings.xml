@@ -53,11 +53,25 @@
     <!-- Main Screen -->
     <string name="welcome_message">Welcome to HK Pet Owners App</string>
     <string name="main_features">Features</string>
+    <string name="add_my_pet">Add My Pet</string>
     <string name="pet_parks">Find Pet Parks</string>
     <string name="pet_album">Pet Album</string>
     <string name="vaccine_records">Vaccine Records</string>
     <string name="health_reminders">Health Reminders</string>
-    <string name="feature_coming_soon">This feature is coming soon</string>
+    <string name="feature_coming_soon">This feature coming soon.....</string>
+
+    <!-- Pet Management -->
+    <string name="my_pets">My Pets</string>
+    <string name="no_pets_yet">No pets yet</string>
+    <string name="add_your_first_pet">Add Your First Pet</string>
+    <string name="add_new_pet">Add New Pet</string>
+    <string name="pet_name_hint">Pet Name</string>
+    <string name="pet_type">Pet Type</string>
+    <string name="save_pet">Save Pet</string>
+    <string name="pet_name_required">Pet name is required</string>
+    <string name="pet_added_success">Pet added successfully!</string>
+    <string name="error_adding_pet">Error adding pet. Please try again.</string>
+    <string name="error_loading_pets">Error loading pets</string>
 
     <!-- Account Management -->
     <string name="account_settings">Account Settings</string>

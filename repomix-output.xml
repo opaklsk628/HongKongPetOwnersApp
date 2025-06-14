@@ -47,16 +47,23 @@ app/google-services.json
 app/proguard-rules.pro
 app/src/androidTest/java/com/example/hongkongpetownersapp/ExampleInstrumentedTest.java
 app/src/main/AndroidManifest.xml
+app/src/main/java/com/example/hongkongpetownersapp/AddPetFragment.java
 app/src/main/java/com/example/hongkongpetownersapp/FirstFragment.java
 app/src/main/java/com/example/hongkongpetownersapp/MainActivity.java
 app/src/main/java/com/example/hongkongpetownersapp/MyApplication.java
+app/src/main/java/com/example/hongkongpetownersapp/Pet.java
+app/src/main/java/com/example/hongkongpetownersapp/PetAdapter.java
+app/src/main/java/com/example/hongkongpetownersapp/PetListFragment.java
 app/src/main/java/com/example/hongkongpetownersapp/SecondFragment.java
 app/src/main/res/drawable/ic_launcher_background.xml
 app/src/main/res/drawable/ic_launcher_foreground.xml
 app/src/main/res/layout/activity_main.xml
 app/src/main/res/layout/content_main.xml
+app/src/main/res/layout/fragment_add_pet.xml
 app/src/main/res/layout/fragment_first.xml
+app/src/main/res/layout/fragment_pet_list.xml
 app/src/main/res/layout/fragment_second.xml
+app/src/main/res/layout/item_pet.xml
 app/src/main/res/menu/menu_main.xml
 app/src/main/res/mipmap-anydpi/ic_launcher_round.xml
 app/src/main/res/mipmap-anydpi/ic_launcher.xml
@@ -84,6 +91,680 @@ settings.gradle
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/AddPetFragment.java">
+package com.example.hongkongpetownersapp;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.example.hongkongpetownersapp.databinding.FragmentAddPetBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+public class AddPetFragment extends Fragment {
+
+    private static final String TAG = "AddPetFragment";
+    private FragmentAddPetBinding binding;
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState
+    ) {
+        binding = FragmentAddPetBinding.inflate(inflater, container, false);
+
+        // Initialize Firebase
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
+        return binding.getRoot();
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Check authentication
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.FirstFragment);
+            return;
+        }
+
+        // Set default selection
+        binding.radioDog.setChecked(true);
+
+        // Setup click listeners
+        binding.buttonSave.setOnClickListener(v -> savePet());
+        binding.buttonCancel.setOnClickListener(v -> navigateBack());
+    }
+
+    private void savePet() {
+        // Get pet name
+        String petName = binding.editPetName.getText().toString().trim();
+
+        // Validate input
+        if (TextUtils.isEmpty(petName)) {
+            binding.layoutPetName.setError(getString(R.string.pet_name_required));
+            return;
+        }
+
+        // Get selected pet type
+        String petType = getSelectedPetType();
+
+        // Get current user
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) return;
+
+        // Show progress
+        showLoading(true);
+
+        // Create new pet
+        Pet newPet = new Pet(petName, petType, currentUser.getUid());
+
+        // Save to Firestore
+        db.collection("pets")
+                .add(newPet)
+                .addOnSuccessListener(documentReference -> {
+                    showLoading(false);
+                    Log.d(TAG, "Pet added with ID: " + documentReference.getId());
+                    Toast.makeText(getContext(),
+                            getString(R.string.pet_added_success),
+                            Toast.LENGTH_SHORT).show();
+                    navigateBack();
+                })
+                .addOnFailureListener(e -> {
+                    showLoading(false);
+                    Log.e(TAG, "Error adding pet", e);
+                    Toast.makeText(getContext(),
+                            getString(R.string.error_adding_pet),
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private String getSelectedPetType() {
+        int selectedId = binding.radioGroupPetType.getCheckedRadioButtonId();
+
+        if (selectedId == R.id.radio_dog) return "Dog";
+        else if (selectedId == R.id.radio_cat) return "Cat";
+        else if (selectedId == R.id.radio_bird) return "Bird";
+        else if (selectedId == R.id.radio_fish) return "Fish";
+        else if (selectedId == R.id.radio_rabbit) return "Rabbit";
+        else return "Other";
+    }
+
+    private void showLoading(boolean show) {
+        if (show) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.buttonSave.setEnabled(false);
+            binding.buttonCancel.setEnabled(false);
+        } else {
+            binding.progressBar.setVisibility(View.GONE);
+            binding.buttonSave.setEnabled(true);
+            binding.buttonCancel.setEnabled(true);
+        }
+    }
+
+    private void navigateBack() {
+        NavHostFragment.findNavController(this).navigateUp();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/Pet.java">
+package com.example.hongkongpetownersapp;
+
+import com.google.firebase.Timestamp;
+
+public class Pet {
+    private String id;
+    private String name;
+    private String type;
+    private String ownerId;
+    private Timestamp createdAt;
+
+    public Pet() {}
+
+    public Pet(String name, String type, String ownerId) {
+        this.name = name;
+        this.type = type;
+        this.ownerId = ownerId;
+        this.createdAt = Timestamp.now();
+    }
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+
+    public String getOwnerId() { return ownerId; }
+    public void setOwnerId(String ownerId) { this.ownerId = ownerId; }
+
+    public Timestamp getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/PetAdapter.java">
+package com.example.hongkongpetownersapp;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
+public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
+
+    private List<Pet> pets;
+
+    public PetAdapter(List<Pet> pets) {
+        this.pets = pets;
+    }
+
+    @NonNull
+    @Override
+    public PetViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_pet, parent, false);
+        return new PetViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull PetViewHolder holder, int position) {
+        Pet pet = pets.get(position);
+        holder.bind(pet);
+    }
+
+    @Override
+    public int getItemCount() {
+        return pets.size();
+    }
+
+    static class PetViewHolder extends RecyclerView.ViewHolder {
+        private TextView textPetName;
+        private TextView textPetType;
+        private TextView textPetIcon;
+
+        public PetViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textPetName = itemView.findViewById(R.id.text_pet_name);
+            textPetType = itemView.findViewById(R.id.text_pet_type);
+            textPetIcon = itemView.findViewById(R.id.text_pet_icon);
+        }
+
+        public void bind(Pet pet) {
+            textPetName.setText(pet.getName());
+            textPetType.setText(pet.getType());
+
+            // Set icon based on pet type
+            switch (pet.getType().toLowerCase()) {
+                case "dog":
+                    textPetIcon.setText("🐕 Dog");
+                    break;
+                case "cat":
+                    textPetIcon.setText("🐈 Cat");
+                    break;
+                case "bird":
+                    textPetIcon.setText("🦜 Bird");
+                    break;
+                case "fish":
+                    textPetIcon.setText("🐠 Fish");
+                    break;
+                case "rabbit":
+                    textPetIcon.setText("🐰 Rabbit");
+                    break;
+                default:
+                    textPetIcon.setText("🐾 Pet");
+                    break;
+            }
+        }
+    }
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/PetListFragment.java">
+package com.example.hongkongpetownersapp;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.example.hongkongpetownersapp.databinding.FragmentPetListBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class PetListFragment extends Fragment {
+
+    private static final String TAG = "PetListFragment";
+    private FragmentPetListBinding binding;
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+    private PetAdapter petAdapter;
+    private List<Pet> petList = new ArrayList<>();
+
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState
+    ) {
+        binding = FragmentPetListBinding.inflate(inflater, container, false);
+
+        // Initialize Firebase
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
+        return binding.getRoot();
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Check authentication
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.FirstFragment);
+            return;
+        }
+
+        // Setup RecyclerView
+        setupRecyclerView();
+
+        // Setup click listeners
+        binding.fabAddPet.setOnClickListener(v -> navigateToAddPet());
+        binding.buttonAddFirstPet.setOnClickListener(v -> navigateToAddPet());
+
+        // Load pets
+        loadPets();
+    }
+
+    private void setupRecyclerView() {
+        petAdapter = new PetAdapter(petList);
+        binding.recyclerViewPets.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerViewPets.setAdapter(petAdapter);
+    }
+
+    private void loadPets() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) return;
+
+        binding.progressBar.setVisibility(View.VISIBLE);
+
+        db.collection("pets")
+                .whereEqualTo("ownerId", currentUser.getUid())
+                .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    binding.progressBar.setVisibility(View.GONE);
+                    petList.clear();
+
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Pet pet = document.toObject(Pet.class);
+                        pet.setId(document.getId());
+                        petList.add(pet);
+                    }
+
+                    petAdapter.notifyDataSetChanged();
+                    updateEmptyState();
+                })
+                .addOnFailureListener(e -> {
+                    binding.progressBar.setVisibility(View.GONE);
+                    Log.e(TAG, "Error loading pets", e);
+                    Toast.makeText(getContext(),
+                            getString(R.string.error_loading_pets),
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void updateEmptyState() {
+        if (petList.isEmpty()) {
+            binding.emptyState.setVisibility(View.VISIBLE);
+            binding.recyclerViewPets.setVisibility(View.GONE);
+        } else {
+            binding.emptyState.setVisibility(View.GONE);
+            binding.recyclerViewPets.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void navigateToAddPet() {
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.action_petListFragment_to_addPetFragment);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}
+</file>
+
+<file path="app/src/main/res/layout/fragment_add_pet.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".AddPetFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_new_pet"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Pet Name Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_pet_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/pet_name_hint"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_pet_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Pet Type Selection -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pet_type"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/radio_group_pet_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/radio_dog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🐕 Dog"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <RadioButton
+                android:id="@+id/radio_cat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🐈 Cat"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <RadioButton
+                android:id="@+id/radio_bird"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🦜 Bird"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <RadioButton
+                android:id="@+id/radio_fish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🐠 Fish"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <RadioButton
+                android:id="@+id/radio_rabbit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🐰 Rabbit"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <RadioButton
+                android:id="@+id/radio_other"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🐾 Other"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+        </RadioGroup>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/button_save"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/save_pet"
+            android:textSize="16sp" />
+
+        <!-- Cancel Button -->
+        <Button
+            android:id="@+id/button_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/cancel"
+            android:textSize="16sp"
+            style="?attr/materialButtonOutlinedStyle" />
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</ScrollView>
+</file>
+
+<file path="app/src/main/res/layout/fragment_pet_list.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".PetListFragment">
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/my_pets"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/empty_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_pets_yet"
+            android:textSize="18sp"
+            android:textColor="#666666" />
+
+        <Button
+            android:id="@+id/button_add_first_pet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/add_your_first_pet" />
+
+    </LinearLayout>
+
+    <!-- Pet List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_pets"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/text_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Loading Progress -->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Add Pet function in FAB -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_pet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</file>
+
+<file path="app/src/main/res/layout/item_pet.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Pet Icon -->
+        <TextView
+            android:id="@+id/text_pet_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="🐕"
+            android:textSize="32sp"
+            android:gravity="center" />
+
+        <!-- Pet Info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_pet_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pet Name"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/text_pet_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pet Type"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
+</file>
 
 <file path=".gitignore">
 *.iml
@@ -156,495 +837,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("com.example.hongkongpetownersapp", appContext.getPackageName());
-    }
-}
-</file>
-
-<file path="app/src/main/java/com/example/hongkongpetownersapp/FirstFragment.java">
-package com.example.hongkongpetownersapp;
-
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
-
-import com.example.hongkongpetownersapp.databinding.FragmentFirstBinding;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-public class FirstFragment extends Fragment {
-
-    private static final String TAG = "FirstFragment";
-    private FragmentFirstBinding binding;
-    private FirebaseAuth mAuth;
-
-    @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
-        binding = FragmentFirstBinding.inflate(inflater, container, false);
-
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-
-        return binding.getRoot();
-    }
-
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // Check if user is already signed in
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            // If already signed in, navigate to main screen
-            navigateToMainScreen();
-        }
-
-        // Set login button click listener
-        binding.buttonLogin.setOnClickListener(v -> {
-            String email = binding.editEmail.getText().toString().trim();
-            String password = binding.editPassword.getText().toString().trim();
-
-            if (validateInput(email, password)) {
-                loginUser(email, password);
-            }
-        });
-
-        // Set register button click listener
-        binding.buttonRegister.setOnClickListener(v -> {
-            String email = binding.editEmail.getText().toString().trim();
-            String password = binding.editPassword.getText().toString().trim();
-
-            if (validateInput(email, password)) {
-                registerUser(email, password);
-            }
-        });
-
-        // Set forgot password click listener
-        binding.textForgotPassword.setOnClickListener(v -> {
-            String email = binding.editEmail.getText().toString().trim();
-            if (TextUtils.isEmpty(email)) {
-                binding.layoutEmail.setError(getString(R.string.email_required_for_reset));
-                return;
-            }
-            resetPassword(email);
-        });
-    }
-
-    // Validate input fields
-    private boolean validateInput(String email, String password) {
-        boolean isValid = true;
-
-        // Clear previous errors
-        binding.layoutEmail.setError(null);
-        binding.layoutPassword.setError(null);
-
-        // Check if email is empty
-        if (TextUtils.isEmpty(email)) {
-            binding.layoutEmail.setError(getString(R.string.email_required));
-            isValid = false;
-        }
-        // Check email format
-        else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.layoutEmail.setError(getString(R.string.email_invalid));
-            isValid = false;
-        }
-
-        // Check if password is empty
-        if (TextUtils.isEmpty(password)) {
-            binding.layoutPassword.setError(getString(R.string.password_required));
-            isValid = false;
-        }
-        // Check password length ,Firebase requires at least 6 characters
-        else if (password.length() < 6) {
-            binding.layoutPassword.setError(getString(R.string.password_too_short));
-            isValid = false;
-        }
-
-        return isValid;
-    }
-
-    // Sign in user
-    private void loginUser(String email, String password) {
-        // Show progress bar
-        showLoading(true);
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(requireActivity(), task -> {
-                    showLoading(false);
-
-                    if (task.isSuccessful()) {
-                        // Sign in success
-                        Log.d(TAG, "signInWithEmail:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-
-                        // Check if email is verified
-                        if (user != null && !user.isEmailVerified()) {
-                            Toast.makeText(getContext(),
-                                    getString(R.string.please_verify_email),
-                                    Toast.LENGTH_LONG).show();
-                            // Optionally, you can send verification email again
-                            user.sendEmailVerification();
-                        }
-
-                        Toast.makeText(getContext(),
-                                getString(R.string.login_success) + " " + user.getEmail(),
-                                Toast.LENGTH_SHORT).show();
-
-                        // Navigate to main screen
-                        navigateToMainScreen();
-                    } else {
-                        // Sign in failed
-                        Log.w(TAG, "signInWithEmail:failure", task.getException());
-                        String errorMessage = getString(R.string.login_failed) + " ";
-
-                        if (task.getException() != null) {
-                            String exceptionMessage = task.getException().getMessage();
-                            if (exceptionMessage != null) {
-                                if (exceptionMessage.contains("no user record")) {
-                                    errorMessage += getString(R.string.user_not_found);
-                                } else if (exceptionMessage.contains("password is invalid")) {
-                                    errorMessage += getString(R.string.wrong_password);
-                                } else if (exceptionMessage.contains("disabled")) {
-                                    errorMessage += getString(R.string.account_disabled);
-                                } else {
-                                    errorMessage += getString(R.string.check_credentials);
-                                }
-                            }
-                        }
-
-                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
-
-    // Register new user
-    private void registerUser(String email, String password) {
-        // Show progress bar
-        showLoading(true);
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(requireActivity(), task -> {
-                    showLoading(false);
-
-                    if (task.isSuccessful()) {
-                        // Registration success
-                        Log.d(TAG, "createUserWithEmail:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-
-                        // Send verification email
-                        if (user != null) {
-                            user.sendEmailVerification()
-                                    .addOnCompleteListener(emailTask -> {
-                                        if (emailTask.isSuccessful()) {
-                                            Toast.makeText(getContext(),
-                                                    getString(R.string.verification_email_sent) + " " + user.getEmail(),
-                                                    Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                        }
-
-                        Toast.makeText(getContext(),
-                                getString(R.string.register_success) + " " + user.getEmail(),
-                                Toast.LENGTH_SHORT).show();
-
-                        // Navigate to main screen
-                        navigateToMainScreen();
-                    } else {
-                        // Registration failed
-                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                        String errorMessage = getString(R.string.register_failed) + " ";
-
-                        if (task.getException() != null) {
-                            String exceptionMessage = task.getException().getMessage();
-                            if (exceptionMessage != null) {
-                                if (exceptionMessage.contains("email address is already in use")) {
-                                    errorMessage += getString(R.string.email_already_used);
-                                } else if (exceptionMessage.contains("email address is badly formatted")) {
-                                    errorMessage += getString(R.string.email_invalid);
-                                } else {
-                                    errorMessage += getString(R.string.try_again_later);
-                                }
-                            }
-                        }
-
-                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
-
-    // Reset password
-    private void resetPassword(String email) {
-        showLoading(true);
-
-        mAuth.sendPasswordResetEmail(email)
-                .addOnCompleteListener(task -> {
-                    showLoading(false);
-
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "Password reset email sent");
-                        Toast.makeText(getContext(),
-                                getString(R.string.password_reset_email_sent),
-                                Toast.LENGTH_LONG).show();
-                    } else {
-                        Log.e(TAG, "Failed to send reset email", task.getException());
-                        Toast.makeText(getContext(),
-                                getString(R.string.password_reset_failed),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
-
-    // Show/hide loading progress
-    private void showLoading(boolean show) {
-        if (show) {
-            binding.progressBar.setVisibility(View.VISIBLE);
-            binding.buttonLogin.setEnabled(false);
-            binding.buttonRegister.setEnabled(false);
-            binding.editEmail.setEnabled(false);
-            binding.editPassword.setEnabled(false);
-        } else {
-            binding.progressBar.setVisibility(View.GONE);
-            binding.buttonLogin.setEnabled(true);
-            binding.buttonRegister.setEnabled(true);
-            binding.editEmail.setEnabled(true);
-            binding.editPassword.setEnabled(true);
-        }
-    }
-
-    // Navigate to main screen
-    private void navigateToMainScreen() {
-        NavHostFragment.findNavController(FirstFragment.this)
-                .navigate(R.id.action_FirstFragment_to_SecondFragment);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-}
-</file>
-
-<file path="app/src/main/java/com/example/hongkongpetownersapp/SecondFragment.java">
-package com.example.hongkongpetownersapp;
-
-import android.app.AlertDialog;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
-
-import com.example.hongkongpetownersapp.databinding.FragmentSecondBinding;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-public class SecondFragment extends Fragment {
-
-    private FragmentSecondBinding binding;
-    private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
-
-    @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
-        binding = FragmentSecondBinding.inflate(inflater, container, false);
-
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-
-        return binding.getRoot();
-    }
-
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // Check if user is signed in
-        currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            // If not signed in, navigate back to login
-            navigateToLogin();
-            return;
-        }
-
-        // Display user info
-        displayUserInfo();
-
-        // Set logout button click listener
-        binding.buttonLogout.setOnClickListener(v -> showLogoutConfirmation());
-
-        // Set account settings button click listener
-        binding.buttonAccountSettings.setOnClickListener(v -> showAccountSettings());
-
-        // Set verify email button click listener
-        binding.buttonVerifyEmail.setOnClickListener(v -> sendVerificationEmail());
-
-        // Set feature button click listeners
-        setupFeatureButtons();
-    }
-
-    private void displayUserInfo() {
-        if (currentUser != null) {
-            // Display email
-            binding.textUserEmail.setText(currentUser.getEmail());
-
-            // Check email verification status
-            if (!currentUser.isEmailVerified()) {
-                binding.textVerificationStatus.setVisibility(View.VISIBLE);
-                binding.buttonVerifyEmail.setVisibility(View.VISIBLE);
-            } else {
-                binding.textVerificationStatus.setVisibility(View.GONE);
-                binding.buttonVerifyEmail.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private void setupFeatureButtons() {
-        binding.buttonPetParks.setOnClickListener(v -> {
-            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
-        });
-
-        binding.buttonPetAlbum.setOnClickListener(v -> {
-            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
-        });
-
-        binding.buttonVaccineRecords.setOnClickListener(v -> {
-            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
-        });
-
-        binding.buttonHealthReminders.setOnClickListener(v -> {
-            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    private void showAccountSettings() {
-        String[] options = {
-                getString(R.string.change_password),
-                getString(R.string.change_email),
-                getString(R.string.delete_account)
-        };
-
-        new AlertDialog.Builder(requireContext())
-                .setTitle(getString(R.string.account_settings))
-                .setItems(options, (dialog, which) -> {
-                    switch (which) {
-                        case 0:
-                            changePassword();
-                            break;
-                        case 1:
-                            changeEmail();
-                            break;
-                        case 2:
-                            deleteAccount();
-                            break;
-                    }
-                })
-                .setNegativeButton(getString(R.string.cancel), null)
-                .show();
-    }
-
-    private void changePassword() {
-        if (currentUser != null && currentUser.getEmail() != null) {
-            mAuth.sendPasswordResetEmail(currentUser.getEmail())
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getContext(),
-                                    getString(R.string.password_reset_email_sent),
-                                    Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(getContext(),
-                                    getString(R.string.password_reset_failed),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
-        }
-    }
-
-    private void changeEmail() {
-        Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
-        // Implementation for email change would require re-authentication
-    }
-
-    private void deleteAccount() {
-        new AlertDialog.Builder(requireContext())
-                .setTitle(getString(R.string.delete_account))
-                .setMessage(getString(R.string.delete_account_confirmation))
-                .setPositiveButton(getString(R.string.delete), (dialog, which) -> {
-                    if (currentUser != null) {
-                        currentUser.delete()
-                                .addOnCompleteListener(task -> {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(getContext(),
-                                                getString(R.string.account_deleted),
-                                                Toast.LENGTH_SHORT).show();
-                                        navigateToLogin();
-                                    } else {
-                                        Toast.makeText(getContext(),
-                                                getString(R.string.delete_account_failed),
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                    }
-                })
-                .setNegativeButton(getString(R.string.cancel), null)
-                .show();
-    }
-
-    private void sendVerificationEmail() {
-        if (currentUser != null) {
-            currentUser.sendEmailVerification()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getContext(),
-                                    getString(R.string.verification_email_sent) + " " + currentUser.getEmail(),
-                                    Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(getContext(),
-                                    getString(R.string.verification_email_failed),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
-        }
-    }
-
-    private void showLogoutConfirmation() {
-        new AlertDialog.Builder(requireContext())
-                .setTitle(getString(R.string.logout_button))
-                .setMessage(getString(R.string.logout_confirmation))
-                .setPositiveButton(getString(R.string.logout_button), (dialog, which) -> {
-                    mAuth.signOut();
-                    Toast.makeText(getContext(), getString(R.string.logout_success), Toast.LENGTH_SHORT).show();
-                    navigateToLogin();
-                })
-                .setNegativeButton(getString(R.string.cancel), null)
-                .show();
-    }
-
-    // Navigate to login screen
-    private void navigateToLogin() {
-        NavHostFragment.findNavController(SecondFragment.this)
-                .navigate(R.id.action_SecondFragment_to_FirstFragment);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 }
 </file>
@@ -913,320 +1105,6 @@ public class SecondFragment extends Fragment {
 </androidx.constraintlayout.widget.ConstraintLayout>
 </file>
 
-<file path="app/src/main/res/layout/fragment_first.xml">
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".FirstFragment">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="24dp">
-
-        <TextView
-            android:id="@+id/text_app_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_title"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginTop="40dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/text_subtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/login_subtitle"
-            android:textSize="16sp"
-            android:textColor="#666666"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/text_app_title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layout_email"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:hint="@string/email_hint"
-            app:layout_constraintTop_toBottomOf="@id/text_subtitle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layout_password"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="@string/password_hint"
-            app:passwordToggleEnabled="true"
-            app:layout_constraintTop_toBottomOf="@id/layout_email"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <Button
-            android:id="@+id/button_login"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/login_button"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/layout_password"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <Button
-            android:id="@+id/button_register"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginTop="12dp"
-            android:text="@string/register_button"
-            android:textSize="16sp"
-            style="?attr/materialButtonOutlinedStyle"
-            app:layout_constraintTop_toBottomOf="@id/button_login"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/text_forgot_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/forgot_password"
-            android:textColor="@color/design_default_color_primary"
-            android:padding="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/button_register"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/text_forgot_password"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="24dp" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
-</file>
-
-<file path="app/src/main/res/layout/fragment_second.xml">
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".SecondFragment">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="24dp">
-
-        <TextView
-            android:id="@+id/text_welcome"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/welcome_message"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginTop="40dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/text_user_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="user@example.com"
-            android:textSize="16sp"
-            android:textColor="#666666"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/text_welcome"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/text_verification_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/email_not_verified"
-            android:textSize="14sp"
-            android:textColor="@color/design_default_color_error"
-            android:layout_marginTop="4dp"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/text_user_email"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <Button
-            android:id="@+id/button_verify_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/verify_email_button"
-            android:textSize="14sp"
-            android:visibility="gone"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            app:layout_constraintTop_toBottomOf="@id/text_verification_status"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/text_features_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_features"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginTop="40dp"
-            app:layout_constraintTop_toBottomOf="@id/button_verify_email"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <LinearLayout
-            android:id="@+id/layout_features"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/text_features_title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardElevation="2dp"
-                app:cardCornerRadius="8dp">
-
-                <TextView
-                    android:id="@+id/button_pet_parks"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:text="@string/pet_parks"
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:background="?attr/selectableItemBackground" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardElevation="2dp"
-                app:cardCornerRadius="8dp">
-
-                <TextView
-                    android:id="@+id/button_pet_album"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:text="@string/pet_album"
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:background="?attr/selectableItemBackground" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardElevation="2dp"
-                app:cardCornerRadius="8dp">
-
-                <TextView
-                    android:id="@+id/button_vaccine_records"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:text="@string/vaccine_records"
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:background="?attr/selectableItemBackground" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardElevation="2dp"
-                app:cardCornerRadius="8dp">
-
-                <TextView
-                    android:id="@+id/button_health_reminders"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:text="@string/health_reminders"
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:background="?attr/selectableItemBackground" />
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/button_account_settings"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginTop="32dp"
-            android:text="@string/account_settings"
-            android:textSize="16sp"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            app:layout_constraintTop_toBottomOf="@id/layout_features"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <Button
-            android:id="@+id/button_logout"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/logout_button"
-            android:textSize="16sp"
-            style="?attr/materialButtonOutlinedStyle"
-            app:layout_constraintTop_toBottomOf="@id/button_account_settings"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
-</file>
-
 <file path="app/src/main/res/menu/menu_main.xml">
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -1276,6 +1154,7 @@ public class SecondFragment extends Fragment {
             android:id="@+id/action_FirstFragment_to_SecondFragment"
             app:destination="@id/SecondFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/SecondFragment"
         android:name="com.example.hongkongpetownersapp.SecondFragment"
@@ -1285,7 +1164,28 @@ public class SecondFragment extends Fragment {
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
+
+        <action
+            android:id="@+id/action_SecondFragment_to_petListFragment"
+            app:destination="@id/petListFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/petListFragment"
+        android:name="com.example.hongkongpetownersapp.PetListFragment"
+        android:label="@string/my_pets"
+        tools:layout="@layout/fragment_pet_list">
+
+        <action
+            android:id="@+id/action_petListFragment_to_addPetFragment"
+            app:destination="@id/addPetFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addPetFragment"
+        android:name="com.example.hongkongpetownersapp.AddPetFragment"
+        android:label="@string/add_new_pet"
+        tools:layout="@layout/fragment_add_pet" />
 </navigation>
 </file>
 
@@ -1340,89 +1240,6 @@ public class SecondFragment extends Fragment {
 <file path="app/src/main/res/values/dimens.xml">
 <resources>
     <dimen name="fab_margin">16dp</dimen>
-</resources>
-</file>
-
-<file path="app/src/main/res/values/strings.xml">
-<resources>
-    <!-- App Info -->
-    <string name="app_name">HK Pet Owners App</string>
-    <string name="app_title">HK Pet Owners</string>
-    <string name="action_settings">Settings</string>
-
-    <!-- Fragment Labels -->
-    <string name="first_fragment_label">Login</string>
-    <string name="second_fragment_label">Home</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-
-    <!-- Login Screen -->
-    <string name="login_subtitle">Please sign in to your account</string>
-    <string name="email_hint">Email</string>
-    <string name="password_hint">Password</string>
-    <string name="login_button">Sign In</string>
-    <string name="register_button">Create Account</string>
-    <string name="forgot_password">Forgot Password</string>
-
-    <!-- Validation Messages -->
-    <string name="email_required">Email is required</string>
-    <string name="email_required_for_reset">Please enter your email to reset password</string>
-    <string name="email_invalid">Please enter a valid email</string>
-    <string name="password_required">Password is required</string>
-    <string name="password_too_short">Password must be at least 6 characters</string>
-
-    <!-- Login Messages -->
-    <string name="login_success">Welcome back!</string>
-    <string name="login_failed">Login failed:</string>
-    <string name="user_not_found">Account not found</string>
-    <string name="wrong_password">Incorrect password</string>
-    <string name="account_disabled">Account has been disabled</string>
-    <string name="check_credentials">Please check your credentials</string>
-
-    <!-- Registration Messages -->
-    <string name="register_success">Registration successful! Welcome</string>
-    <string name="register_failed">Registration failed:</string>
-    <string name="email_already_used">This email is already registered</string>
-    <string name="try_again_later">Please try again later</string>
-
-    <!-- Email Verification -->
-    <string name="please_verify_email">Please verify your email address</string>
-    <string name="verification_email_sent">Verification email sent to</string>
-    <string name="verification_email_failed">Failed to send verification email</string>
-    <string name="email_not_verified">Email not verified</string>
-    <string name="verify_email_button">Send Verification Email</string>
-
-    <!-- Password Reset -->
-    <string name="password_reset_email_sent">Password reset email sent! Check your inbox</string>
-    <string name="password_reset_failed">Failed to send password reset email</string>
-
-    <!-- Main Screen -->
-    <string name="welcome_message">Welcome to HK Pet Owners App</string>
-    <string name="main_features">Features</string>
-    <string name="pet_parks">Find Pet Parks</string>
-    <string name="pet_album">Pet Album</string>
-    <string name="vaccine_records">Vaccine Records</string>
-    <string name="health_reminders">Health Reminders</string>
-    <string name="feature_coming_soon">This feature is coming soon</string>
-
-    <!-- Account Management -->
-    <string name="account_settings">Account Settings</string>
-    <string name="change_password">Change Password</string>
-    <string name="change_email">Change Email</string>
-    <string name="delete_account">Delete Account</string>
-    <string name="delete_account_confirmation">Are you sure you want to delete your account?</string>
-    <string name="account_deleted">Account deleted successfully</string>
-    <string name="delete_account_failed">Failed to delete account. Please re-login and try again.</string>
-
-    <!-- Logout -->
-    <string name="logout_button">Sign Out</string>
-    <string name="logout_confirmation">Are you sure you want to sign out?</string>
-    <string name="logout_success">Successfully signed out</string>
-
-    <!-- General -->
-    <string name="cancel">Cancel</string>
-    <string name="delete">Delete</string>
-    <string name="confirm">Confirm</string>
 </resources>
 </file>
 
@@ -1518,40 +1335,6 @@ android.useAndroidX=true
 # resources declared in the library itself and none from the library's dependencies,
 # thereby reducing the size of the R class for that library
 android.nonTransitiveRClass=true
-</file>
-
-<file path="gradle/libs.versions.toml">
-[versions]
-agp = "8.8.0"
-junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
-appcompat = "1.6.1"
-material = "1.10.0"
-constraintlayout = "2.1.4"
-navigationFragment = "2.6.0"
-navigationUi = "2.6.0"
-firebaseAuth = "23.2.1"
-credentials = "1.5.0"
-credentialsPlayServicesAuth = "1.5.0"
-googleid = "1.1.1"
-
-[libraries]
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
-navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
-firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
-googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
-
-[plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
 </file>
 
 <file path="gradle/wrapper/gradle-wrapper.properties">
@@ -1869,6 +1652,1004 @@ rootProject.name = "HongKongPetOwnersApp"
 include ':app'
 </file>
 
+<file path="app/google-services.json">
+{
+  "project_info": {
+    "project_number": "95346719638",
+    "project_id": "hkpetownersapp",
+    "storage_bucket": "hkpetownersapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95346719638:android:f65c46cf2f2f5fc1103bb7",
+        "android_client_info": {
+          "package_name": "com.example.hongkongpetownersapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh7FasyU-3yeYo8_3Adseii3tvHQzSnvk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/FirstFragment.java">
+package com.example.hongkongpetownersapp;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.example.hongkongpetownersapp.databinding.FragmentFirstBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+public class FirstFragment extends Fragment {
+
+    private static final String TAG = "FirstFragment";
+    private FragmentFirstBinding binding;
+    private FirebaseAuth mAuth;
+
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState
+    ) {
+        binding = FragmentFirstBinding.inflate(inflater, container, false);
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+        return binding.getRoot();
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Check if user is already signed in
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // If already signed in, navigate to main screen
+            navigateToMainScreen();
+        }
+
+        // Set login button click listener
+        binding.buttonLogin.setOnClickListener(v -> {
+            String email = binding.editEmail.getText().toString().trim();
+            String password = binding.editPassword.getText().toString().trim();
+
+            if (validateInput(email, password)) {
+                loginUser(email, password);
+            }
+        });
+
+        // Set register button click listener
+        binding.buttonRegister.setOnClickListener(v -> {
+            String email = binding.editEmail.getText().toString().trim();
+            String password = binding.editPassword.getText().toString().trim();
+
+            if (validateInput(email, password)) {
+                registerUser(email, password);
+            }
+        });
+
+        // Set forgot password click listener
+        binding.textForgotPassword.setOnClickListener(v -> {
+            String email = binding.editEmail.getText().toString().trim();
+            if (TextUtils.isEmpty(email)) {
+                binding.layoutEmail.setError(getString(R.string.email_required_for_reset));
+                return;
+            }
+            resetPassword(email);
+        });
+    }
+
+    // Validate input fields
+    private boolean validateInput(String email, String password) {
+        boolean isValid = true;
+
+        // Clear previous errors
+        binding.layoutEmail.setError(null);
+        binding.layoutPassword.setError(null);
+
+        // Check if email is empty
+        if (TextUtils.isEmpty(email)) {
+            binding.layoutEmail.setError(getString(R.string.email_required));
+            isValid = false;
+        }
+        // Check email format
+        else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.layoutEmail.setError(getString(R.string.email_invalid));
+            isValid = false;
+        }
+
+        // Check if password is empty
+        if (TextUtils.isEmpty(password)) {
+            binding.layoutPassword.setError(getString(R.string.password_required));
+            isValid = false;
+        }
+        // Check password length ,Firebase requires at least 6 characters
+        else if (password.length() < 6) {
+            binding.layoutPassword.setError(getString(R.string.password_too_short));
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    // Sign in user
+    private void loginUser(String email, String password) {
+        // Show progress bar
+        showLoading(true);
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(requireActivity(), task -> {
+                    showLoading(false);
+
+                    if (task.isSuccessful()) {
+                        // Sign in success
+                        Log.d(TAG, "signInWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+
+                        // Check if email is verified
+                        if (user != null && !user.isEmailVerified()) {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.please_verify_email),
+                                    Toast.LENGTH_LONG).show();
+                            // Optionally, you can send verification email again
+                            user.sendEmailVerification();
+                        }
+
+                        Toast.makeText(getContext(),
+                                getString(R.string.login_success) + " " + user.getEmail(),
+                                Toast.LENGTH_SHORT).show();
+
+                        // Navigate to main screen
+                        navigateToMainScreen();
+                    } else {
+                        // Sign in failed
+                        Log.w(TAG, "signInWithEmail:failure", task.getException());
+                        String errorMessage = getString(R.string.login_failed) + " ";
+
+                        if (task.getException() != null) {
+                            String exceptionMessage = task.getException().getMessage();
+                            if (exceptionMessage != null) {
+                                if (exceptionMessage.contains("no user record")) {
+                                    errorMessage += getString(R.string.user_not_found);
+                                } else if (exceptionMessage.contains("password is invalid")) {
+                                    errorMessage += getString(R.string.wrong_password);
+                                } else if (exceptionMessage.contains("disabled")) {
+                                    errorMessage += getString(R.string.account_disabled);
+                                } else {
+                                    errorMessage += getString(R.string.check_credentials);
+                                }
+                            }
+                        }
+
+                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    // Register new user
+    private void registerUser(String email, String password) {
+        // Show progress bar
+        showLoading(true);
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(requireActivity(), task -> {
+                    showLoading(false);
+
+                    if (task.isSuccessful()) {
+                        // Registration success
+                        Log.d(TAG, "createUserWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+
+                        // Send verification email
+                        if (user != null) {
+                            user.sendEmailVerification()
+                                    .addOnCompleteListener(emailTask -> {
+                                        if (emailTask.isSuccessful()) {
+                                            Toast.makeText(getContext(),
+                                                    getString(R.string.verification_email_sent) + " " + user.getEmail(),
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                        }
+
+                        Toast.makeText(getContext(),
+                                getString(R.string.register_success) + " " + user.getEmail(),
+                                Toast.LENGTH_SHORT).show();
+
+                        // Navigate to main screen
+                        navigateToMainScreen();
+                    } else {
+                        // Registration failed
+                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        String errorMessage = getString(R.string.register_failed) + " ";
+
+                        if (task.getException() != null) {
+                            String exceptionMessage = task.getException().getMessage();
+                            if (exceptionMessage != null) {
+                                if (exceptionMessage.contains("email address is already in use")) {
+                                    errorMessage += getString(R.string.email_already_used);
+                                } else if (exceptionMessage.contains("email address is badly formatted")) {
+                                    errorMessage += getString(R.string.email_invalid);
+                                } else {
+                                    errorMessage += getString(R.string.try_again_later);
+                                }
+                            }
+                        }
+
+                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    // Reset password
+    private void resetPassword(String email) {
+        showLoading(true);
+
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(task -> {
+                    showLoading(false);
+
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Password reset email sent");
+                        Toast.makeText(getContext(),
+                                getString(R.string.password_reset_email_sent),
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Log.e(TAG, "Failed to send reset email", task.getException());
+                        Toast.makeText(getContext(),
+                                getString(R.string.password_reset_failed),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    // Show/hide loading progress
+    private void showLoading(boolean show) {
+        if (show) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.buttonLogin.setEnabled(false);
+            binding.buttonRegister.setEnabled(false);
+            binding.editEmail.setEnabled(false);
+            binding.editPassword.setEnabled(false);
+        } else {
+            binding.progressBar.setVisibility(View.GONE);
+            binding.buttonLogin.setEnabled(true);
+            binding.buttonRegister.setEnabled(true);
+            binding.editEmail.setEnabled(true);
+            binding.editPassword.setEnabled(true);
+        }
+    }
+
+    // Navigate to main screen
+    private void navigateToMainScreen() {
+        NavHostFragment.findNavController(FirstFragment.this)
+                .navigate(R.id.action_FirstFragment_to_SecondFragment);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/MyApplication.java">
+package com.example.hongkongpetownersapp;
+
+import android.app.Application;
+import com.google.firebase.FirebaseApp;
+
+public class MyApplication extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        FirebaseApp.initializeApp(this);
+    }
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/SecondFragment.java">
+package com.example.hongkongpetownersapp;
+
+import android.app.AlertDialog;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.example.hongkongpetownersapp.databinding.FragmentSecondBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+public class SecondFragment extends Fragment {
+
+    private FragmentSecondBinding binding;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState
+    ) {
+        binding = FragmentSecondBinding.inflate(inflater, container, false);
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+        return binding.getRoot();
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Check if user is signed in
+        currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            // If not signed in, navigate back to login
+            navigateToLogin();
+            return;
+        }
+
+        // Display user info
+        displayUserInfo();
+
+        // Set logout button click listener
+        binding.buttonLogout.setOnClickListener(v -> showLogoutConfirmation());
+
+        // Set account settings button click listener
+        binding.buttonAccountSettings.setOnClickListener(v -> showAccountSettings());
+
+        // Set verify email button click listener
+        binding.buttonVerifyEmail.setOnClickListener(v -> sendVerificationEmail());
+
+        // Set feature button click listeners
+        setupFeatureButtons();
+    }
+
+    private void displayUserInfo() {
+        if (currentUser != null) {
+            // Display email
+            binding.textUserEmail.setText(currentUser.getEmail());
+
+            // Check email verification status
+            if (!currentUser.isEmailVerified()) {
+                binding.textVerificationStatus.setVisibility(View.VISIBLE);
+                binding.buttonVerifyEmail.setVisibility(View.VISIBLE);
+            } else {
+                binding.textVerificationStatus.setVisibility(View.GONE);
+                binding.buttonVerifyEmail.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void setupFeatureButtons() {
+        binding.buttonPetParks.setOnClickListener(v -> {
+            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+        });
+
+        binding.buttonPetAlbum.setOnClickListener(v -> {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_SecondFragment_to_petListFragment);
+        });
+
+        binding.buttonVaccineRecords.setOnClickListener(v -> {
+            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+        });
+
+        binding.buttonHealthReminders.setOnClickListener(v -> {
+            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void showAccountSettings() {
+        String[] options = {
+                getString(R.string.change_password),
+                getString(R.string.change_email),
+                getString(R.string.delete_account)
+        };
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.account_settings))
+                .setItems(options, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            changePassword();
+                            break;
+                        case 1:
+                            changeEmail();
+                            break;
+                        case 2:
+                            deleteAccount();
+                            break;
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
+    }
+
+    private void changePassword() {
+        if (currentUser != null && currentUser.getEmail() != null) {
+            mAuth.sendPasswordResetEmail(currentUser.getEmail())
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.password_reset_email_sent),
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.password_reset_failed),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+        }
+    }
+
+    private void changeEmail() {
+        Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+        // Implementation for email change would require re-authentication
+    }
+
+    private void deleteAccount() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.delete_account))
+                .setMessage(getString(R.string.delete_account_confirmation))
+                .setPositiveButton(getString(R.string.delete), (dialog, which) -> {
+                    if (currentUser != null) {
+                        currentUser.delete()
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getContext(),
+                                                getString(R.string.account_deleted),
+                                                Toast.LENGTH_SHORT).show();
+                                        navigateToLogin();
+                                    } else {
+                                        Toast.makeText(getContext(),
+                                                getString(R.string.delete_account_failed),
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
+    }
+
+    private void sendVerificationEmail() {
+        if (currentUser != null) {
+            currentUser.sendEmailVerification()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.verification_email_sent) + " " + currentUser.getEmail(),
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.verification_email_failed),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+        }
+    }
+
+    private void showLogoutConfirmation() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.logout_button))
+                .setMessage(getString(R.string.logout_confirmation))
+                .setPositiveButton(getString(R.string.logout_button), (dialog, which) -> {
+                    mAuth.signOut();
+                    Toast.makeText(getContext(), getString(R.string.logout_success), Toast.LENGTH_SHORT).show();
+                    navigateToLogin();
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
+    }
+
+    // Navigate to login screen
+    private void navigateToLogin() {
+        NavHostFragment.findNavController(SecondFragment.this)
+                .navigate(R.id.action_SecondFragment_to_FirstFragment);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}
+</file>
+
+<file path="app/src/main/res/layout/fragment_first.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".FirstFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/text_app_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_title"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="40dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_subtitle"
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/text_app_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:hint="@string/email_hint"
+            app:layout_constraintTop_toBottomOf="@id/text_subtitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/password_hint"
+            app:passwordToggleEnabled="true"
+            app:layout_constraintTop_toBottomOf="@id/layout_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/button_login"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/login_button"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/layout_password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/button_register"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/register_button"
+            android:textSize="16sp"
+            style="?attr/materialButtonOutlinedStyle"
+            app:layout_constraintTop_toBottomOf="@id/button_login"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_forgot_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/forgot_password"
+            android:textColor="@color/design_default_color_primary"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/button_register"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/text_forgot_password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
+</file>
+
+<file path="app/src/main/res/layout/fragment_second.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".SecondFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/text_welcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome_message"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="40dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_user_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="user@example.com"
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/text_welcome"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_verification_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/email_not_verified"
+            android:textSize="14sp"
+            android:textColor="@color/design_default_color_error"
+            android:layout_marginTop="4dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/text_user_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/button_verify_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verify_email_button"
+            android:textSize="14sp"
+            android:visibility="gone"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/text_verification_status"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_features_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_features"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="40dp"
+            app:layout_constraintTop_toBottomOf="@id/button_verify_email"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/layout_features"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/text_features_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:id="@+id/button_pet_parks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="@string/pet_parks"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?attr/selectableItemBackground" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:id="@+id/button_pet_album"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="@string/pet_album"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?attr/selectableItemBackground" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:id="@+id/button_vaccine_records"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="@string/vaccine_records"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?attr/selectableItemBackground" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:id="@+id/button_health_reminders"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="@string/health_reminders"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?attr/selectableItemBackground" />
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/button_account_settings"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/account_settings"
+            android:textSize="16sp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/layout_features"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/button_logout"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/logout_button"
+            android:textSize="16sp"
+            style="?attr/materialButtonOutlinedStyle"
+            app:layout_constraintTop_toBottomOf="@id/button_account_settings"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
+</file>
+
+<file path="app/src/main/res/values/strings.xml">
+<resources>
+    <!-- App Info -->
+    <string name="app_name">HK Pet Owners App</string>
+    <string name="app_title">HK Pet Owners</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Fragment Labels -->
+    <string name="first_fragment_label">Login</string>
+    <string name="second_fragment_label">Home</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <!-- Login Screen -->
+    <string name="login_subtitle">Please sign in to your account</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button">Sign In</string>
+    <string name="register_button">Create Account</string>
+    <string name="forgot_password">Forgot Password</string>
+
+    <!-- Validation Messages -->
+    <string name="email_required">Email is required</string>
+    <string name="email_required_for_reset">Please enter your email to reset password</string>
+    <string name="email_invalid">Please enter a valid email</string>
+    <string name="password_required">Password is required</string>
+    <string name="password_too_short">Password must be at least 6 characters</string>
+
+    <!-- Login Messages -->
+    <string name="login_success">Welcome back!</string>
+    <string name="login_failed">Login failed:</string>
+    <string name="user_not_found">Account not found</string>
+    <string name="wrong_password">Incorrect password</string>
+    <string name="account_disabled">Account has been disabled</string>
+    <string name="check_credentials">Please check your credentials</string>
+
+    <!-- Registration Messages -->
+    <string name="register_success">Registration successful! Welcome</string>
+    <string name="register_failed">Registration failed:</string>
+    <string name="email_already_used">This email is already registered</string>
+    <string name="try_again_later">Please try again later</string>
+
+    <!-- Email Verification -->
+    <string name="please_verify_email">Please verify your email address</string>
+    <string name="verification_email_sent">Verification email sent to</string>
+    <string name="verification_email_failed">Failed to send verification email</string>
+    <string name="email_not_verified">Email not verified</string>
+    <string name="verify_email_button">Send Verification Email</string>
+
+    <!-- Password Reset -->
+    <string name="password_reset_email_sent">Password reset email sent! Check your inbox</string>
+    <string name="password_reset_failed">Failed to send password reset email</string>
+
+    <!-- Main Screen -->
+    <string name="welcome_message">Welcome to HK Pet Owners App</string>
+    <string name="main_features">Features</string>
+    <string name="pet_parks">Find Pet Parks</string>
+    <string name="pet_album">Pet Album</string>
+    <string name="vaccine_records">Vaccine Records</string>
+    <string name="health_reminders">Health Reminders</string>
+    <string name="feature_coming_soon">This feature is coming soon</string>
+
+    <!-- Pet Management -->
+    <string name="my_pets">My Pets</string>
+    <string name="no_pets_yet">No pets yet</string>
+    <string name="add_your_first_pet">Add Your First Pet</string>
+    <string name="add_new_pet">Add New Pet</string>
+    <string name="pet_name_hint">Pet Name</string>
+    <string name="pet_type">Pet Type</string>
+    <string name="save_pet">Save Pet</string>
+    <string name="pet_name_required">Pet name is required</string>
+    <string name="pet_added_success">Pet added successfully!</string>
+    <string name="error_adding_pet">Error adding pet. Please try again.</string>
+    <string name="error_loading_pets">Error loading pets</string>
+
+    <!-- Account Management -->
+    <string name="account_settings">Account Settings</string>
+    <string name="change_password">Change Password</string>
+    <string name="change_email">Change Email</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="delete_account_confirmation">Are you sure you want to delete your account?</string>
+    <string name="account_deleted">Account deleted successfully</string>
+    <string name="delete_account_failed">Failed to delete account. Please re-login and try again.</string>
+
+    <!-- Logout -->
+    <string name="logout_button">Sign Out</string>
+    <string name="logout_confirmation">Are you sure you want to sign out?</string>
+    <string name="logout_success">Successfully signed out</string>
+
+    <!-- General -->
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="confirm">Confirm</string>
+</resources>
+</file>
+
+<file path="build.gradle">
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.gms:google-services:4.4.0'
+    }
+}
+
+plugins {
+    alias(libs.plugins.android.application) apply false
+}
+</file>
+
+<file path="gradle/libs.versions.toml">
+[versions]
+agp = "8.8.0"
+junit = "4.13.2"
+junitVersion = "1.1.5"
+espressoCore = "3.5.1"
+appcompat = "1.6.1"
+material = "1.10.0"
+constraintlayout = "2.1.4"
+navigationFragment = "2.6.0"
+navigationUi = "2.6.0"
+firebaseAuth = "23.2.1"
+credentials = "1.5.0"
+credentialsPlayServicesAuth = "1.5.0"
+googleid = "1.1.1"
+
+[libraries]
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
+navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+</file>
+
 <file path="app/build.gradle">
 plugins {
     alias(libs.plugins.android.application)
@@ -1925,38 +2706,6 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
-}
-</file>
-
-<file path="app/google-services.json">
-{
-  "project_info": {
-    "project_number": "95346719638",
-    "project_id": "hkpetownersapp",
-    "storage_bucket": "hkpetownersapp.firebasestorage.app"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:95346719638:android:f65c46cf2f2f5fc1103bb7",
-        "android_client_info": {
-          "package_name": "com.example.hongkongpetownersapp"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCh7FasyU-3yeYo8_3Adseii3tvHQzSnvk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    }
-  ],
-  "configuration_version": "1"
 }
 </file>
 
@@ -2085,38 +2834,6 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-}
-</file>
-
-<file path="app/src/main/java/com/example/hongkongpetownersapp/MyApplication.java">
-package com.example.hongkongpetownersapp;
-
-import android.app.Application;
-import com.google.firebase.FirebaseApp;
-
-public class MyApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        FirebaseApp.initializeApp(this);
-    }
-}
-</file>
-
-<file path="build.gradle">
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.google.gms:google-services:4.4.0'
-    }
-}
-
-plugins {
-    alias(libs.plugins.android.application) apply false
 }
 </file>
 

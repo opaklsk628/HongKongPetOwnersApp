@@ -45,7 +45,6 @@ public class SecondFragment extends Fragment {
             return;
         }
 
-        // Display user info
         displayUserInfo();
 
         // Set logout button click listener
@@ -56,6 +55,12 @@ public class SecondFragment extends Fragment {
 
         // Set verify email button click listener
         binding.buttonVerifyEmail.setOnClickListener(v -> sendVerificationEmail());
+
+        // Set add my pet button click listener
+        binding.buttonAddMyPet.setOnClickListener(v -> {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_SecondFragment_to_addPetFragment);
+        });
 
         // Set feature button click listeners
         setupFeatureButtons();
@@ -83,7 +88,8 @@ public class SecondFragment extends Fragment {
         });
 
         binding.buttonPetAlbum.setOnClickListener(v -> {
-            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_SecondFragment_to_petListFragment);
         });
 
         binding.buttonVaccineRecords.setOnClickListener(v -> {

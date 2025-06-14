@@ -62,6 +62,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Add My Pet Button - NEW -->
+        <Button
+            android:id="@+id/button_add_my_pet"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/add_my_pet"
+            android:textSize="18sp"
+            app:icon="@android:drawable/ic_input_add"
+            app:iconGravity="textStart"
+            app:cornerRadius="12dp"
+            app:layout_constraintTop_toBottomOf="@id/button_verify_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <TextView
             android:id="@+id/text_features_title"
             android:layout_width="wrap_content"
@@ -70,8 +85,8 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:layout_marginTop="40dp"
-            app:layout_constraintTop_toBottomOf="@id/button_verify_email"
+            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toBottomOf="@id/button_add_my_pet"
             app:layout_constraintStart_toStartOf="parent" />
 
         <LinearLayout
