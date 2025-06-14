@@ -107,98 +107,6 @@ local.properties
 /build
 </file>
 
-<file path="app/build.gradle">
-plugins {
-    alias(libs.plugins.android.application)
-    // 添加 Google Services plugin
-    id 'com.google.gms.google-services'
-}
-
-android {
-    namespace 'com.example.hongkongpetownersapp'
-    compileSdk 35
-
-    defaultConfig {
-        applicationId "com.example.hongkongpetownersapp"
-        minSdk 31
-        targetSdk 35
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-    buildFeatures {
-        viewBinding true
-    }
-}
-
-dependencies {
-    // 原有的依賴
-    implementation libs.appcompat
-    implementation libs.material
-    implementation libs.constraintlayout
-    implementation libs.navigation.fragment
-    implementation libs.navigation.ui
-
-    // Firebase BOM - 管理所有 Firebase 庫的版本
-    implementation platform('com.google.firebase:firebase-bom:32.7.0')
-
-    // Firebase 依賴（不需要指定版本，BOM 會自動管理）
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-firestore'
-    implementation 'com.google.firebase:firebase-storage'
-
-    // 測試依賴
-    testImplementation libs.junit
-    androidTestImplementation libs.ext.junit
-    androidTestImplementation libs.espresso.core
-}
-</file>
-
-<file path="app/google-services.json">
-{
-  "project_info": {
-    "project_number": "95346719638",
-    "project_id": "hkpetownersapp",
-    "storage_bucket": "hkpetownersapp.firebasestorage.app"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:95346719638:android:f65c46cf2f2f5fc1103bb7",
-        "android_client_info": {
-          "package_name": "com.example.hongkongpetownersapp"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCh7FasyU-3yeYo8_3Adseii3tvHQzSnvk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    }
-  ],
-  "configuration_version": "1"
-}
-</file>
-
 <file path="app/proguard-rules.pro">
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
@@ -252,220 +160,276 @@ public class ExampleInstrumentedTest {
 }
 </file>
 
-<file path="app/src/main/AndroidManifest.xml">
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <!-- 添加網路權限（Firebase 需要） -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <application
-        android:name=".MyApplication"
-        android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.HongKongPetOwnersApp"
-        tools:targetApi="31">
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.HongKongPetOwnersApp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-    </application>
-
-</manifest>
-</file>
-
 <file path="app/src/main/java/com/example/hongkongpetownersapp/FirstFragment.java">
 package com.example.hongkongpetownersapp;
 
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.hongkongpetownersapp.databinding.FragmentFirstBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class FirstFragment extends Fragment {
 
+    private static final String TAG = "FirstFragment";
     private FragmentFirstBinding binding;
+    private FirebaseAuth mAuth;
 
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-
         binding = FragmentFirstBinding.inflate(inflater, container, false);
-        return binding.getRoot();
 
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+        return binding.getRoot();
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonFirst.setOnClickListener(v ->
-                NavHostFragment.findNavController(FirstFragment.this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
-        );
+        // Check if user is already signed in
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // If already signed in, navigate to main screen
+            navigateToMainScreen();
+        }
+
+        // Set login button click listener
+        binding.buttonLogin.setOnClickListener(v -> {
+            String email = binding.editEmail.getText().toString().trim();
+            String password = binding.editPassword.getText().toString().trim();
+
+            if (validateInput(email, password)) {
+                loginUser(email, password);
+            }
+        });
+
+        // Set register button click listener
+        binding.buttonRegister.setOnClickListener(v -> {
+            String email = binding.editEmail.getText().toString().trim();
+            String password = binding.editPassword.getText().toString().trim();
+
+            if (validateInput(email, password)) {
+                registerUser(email, password);
+            }
+        });
+
+        // Set forgot password click listener
+        binding.textForgotPassword.setOnClickListener(v -> {
+            String email = binding.editEmail.getText().toString().trim();
+            if (TextUtils.isEmpty(email)) {
+                binding.layoutEmail.setError(getString(R.string.email_required_for_reset));
+                return;
+            }
+            resetPassword(email);
+        });
+    }
+
+    // Validate input fields
+    private boolean validateInput(String email, String password) {
+        boolean isValid = true;
+
+        // Clear previous errors
+        binding.layoutEmail.setError(null);
+        binding.layoutPassword.setError(null);
+
+        // Check if email is empty
+        if (TextUtils.isEmpty(email)) {
+            binding.layoutEmail.setError(getString(R.string.email_required));
+            isValid = false;
+        }
+        // Check email format
+        else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.layoutEmail.setError(getString(R.string.email_invalid));
+            isValid = false;
+        }
+
+        // Check if password is empty
+        if (TextUtils.isEmpty(password)) {
+            binding.layoutPassword.setError(getString(R.string.password_required));
+            isValid = false;
+        }
+        // Check password length ,Firebase requires at least 6 characters
+        else if (password.length() < 6) {
+            binding.layoutPassword.setError(getString(R.string.password_too_short));
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    // Sign in user
+    private void loginUser(String email, String password) {
+        // Show progress bar
+        showLoading(true);
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(requireActivity(), task -> {
+                    showLoading(false);
+
+                    if (task.isSuccessful()) {
+                        // Sign in success
+                        Log.d(TAG, "signInWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+
+                        // Check if email is verified
+                        if (user != null && !user.isEmailVerified()) {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.please_verify_email),
+                                    Toast.LENGTH_LONG).show();
+                            // Optionally, you can send verification email again
+                            user.sendEmailVerification();
+                        }
+
+                        Toast.makeText(getContext(),
+                                getString(R.string.login_success) + " " + user.getEmail(),
+                                Toast.LENGTH_SHORT).show();
+
+                        // Navigate to main screen
+                        navigateToMainScreen();
+                    } else {
+                        // Sign in failed
+                        Log.w(TAG, "signInWithEmail:failure", task.getException());
+                        String errorMessage = getString(R.string.login_failed) + " ";
+
+                        if (task.getException() != null) {
+                            String exceptionMessage = task.getException().getMessage();
+                            if (exceptionMessage != null) {
+                                if (exceptionMessage.contains("no user record")) {
+                                    errorMessage += getString(R.string.user_not_found);
+                                } else if (exceptionMessage.contains("password is invalid")) {
+                                    errorMessage += getString(R.string.wrong_password);
+                                } else if (exceptionMessage.contains("disabled")) {
+                                    errorMessage += getString(R.string.account_disabled);
+                                } else {
+                                    errorMessage += getString(R.string.check_credentials);
+                                }
+                            }
+                        }
+
+                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    // Register new user
+    private void registerUser(String email, String password) {
+        // Show progress bar
+        showLoading(true);
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(requireActivity(), task -> {
+                    showLoading(false);
+
+                    if (task.isSuccessful()) {
+                        // Registration success
+                        Log.d(TAG, "createUserWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+
+                        // Send verification email
+                        if (user != null) {
+                            user.sendEmailVerification()
+                                    .addOnCompleteListener(emailTask -> {
+                                        if (emailTask.isSuccessful()) {
+                                            Toast.makeText(getContext(),
+                                                    getString(R.string.verification_email_sent) + " " + user.getEmail(),
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                        }
+
+                        Toast.makeText(getContext(),
+                                getString(R.string.register_success) + " " + user.getEmail(),
+                                Toast.LENGTH_SHORT).show();
+
+                        // Navigate to main screen
+                        navigateToMainScreen();
+                    } else {
+                        // Registration failed
+                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        String errorMessage = getString(R.string.register_failed) + " ";
+
+                        if (task.getException() != null) {
+                            String exceptionMessage = task.getException().getMessage();
+                            if (exceptionMessage != null) {
+                                if (exceptionMessage.contains("email address is already in use")) {
+                                    errorMessage += getString(R.string.email_already_used);
+                                } else if (exceptionMessage.contains("email address is badly formatted")) {
+                                    errorMessage += getString(R.string.email_invalid);
+                                } else {
+                                    errorMessage += getString(R.string.try_again_later);
+                                }
+                            }
+                        }
+
+                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    // Reset password
+    private void resetPassword(String email) {
+        showLoading(true);
+
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(task -> {
+                    showLoading(false);
+
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Password reset email sent");
+                        Toast.makeText(getContext(),
+                                getString(R.string.password_reset_email_sent),
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Log.e(TAG, "Failed to send reset email", task.getException());
+                        Toast.makeText(getContext(),
+                                getString(R.string.password_reset_failed),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    // Show/hide loading progress
+    private void showLoading(boolean show) {
+        if (show) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.buttonLogin.setEnabled(false);
+            binding.buttonRegister.setEnabled(false);
+            binding.editEmail.setEnabled(false);
+            binding.editPassword.setEnabled(false);
+        } else {
+            binding.progressBar.setVisibility(View.GONE);
+            binding.buttonLogin.setEnabled(true);
+            binding.buttonRegister.setEnabled(true);
+            binding.editEmail.setEnabled(true);
+            binding.editPassword.setEnabled(true);
+        }
+    }
+
+    // Navigate to main screen
+    private void navigateToMainScreen() {
+        NavHostFragment.findNavController(FirstFragment.this)
+                .navigate(R.id.action_FirstFragment_to_SecondFragment);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-
-}
-</file>
-
-<file path="app/src/main/java/com/example/hongkongpetownersapp/MainActivity.java">
-package com.example.hongkongpetownersapp;
-
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-
-import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.hongkongpetownersapp.databinding.ActivityMainBinding;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-public class MainActivity extends AppCompatActivity {
-
-    private static final String TAG = "MainActivity";
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
-    private FirebaseFirestore db;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        setSupportActionBar(binding.toolbar);
-
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-
-        // start firestore
-        db = FirebaseFirestore.getInstance();
-
-        // test firebase connect
-        testFirebaseConnection();
-
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // write data to firebase
-                writeTestData(view);
-            }
-        });
-    }
-
-    private void testFirebaseConnection() {
-// Firestore test read data
-        db.collection("test")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    Log.d(TAG, "Firebase connect success,file number: " + queryDocumentSnapshots.size());
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Firebase connect fail " + e.getMessage());
-                });
-    }
-
-    private void writeTestData(View view) {
-// create test data
-        Map<String, Object> testData = new HashMap<>();
-        testData.put("message", "Hello world");
-        testData.put("timestamp", new Date());
-        testData.put("testUser", "Android Developer");
-
-// write data to firestore
-        db.collection("test")
-                .add(testData)
-                .addOnSuccessListener(documentReference -> {
-                    Log.d(TAG, "test success, file ID: " + documentReference.getId());
-                    Snackbar.make(view, "data write to firebase", Snackbar.LENGTH_LONG)
-                            .setAnchorView(R.id.fab)
-                            .setAction("Action", null).show();
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "write fail: " + e.getMessage());
-                    Snackbar.make(view, "write fail: " + e.getMessage(), Snackbar.LENGTH_LONG)
-                            .setAnchorView(R.id.fab)
-                            .show();
-                });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
-    }
-}
-</file>
-
-<file path="app/src/main/java/com/example/hongkongpetownersapp/MyApplication.java">
-package com.example.hongkongpetownersapp;
-
-import android.app.Application;
-import com.google.firebase.FirebaseApp;
-
-public class MyApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        FirebaseApp.initializeApp(this);
     }
 }
 </file>
@@ -473,39 +437,208 @@ public class MyApplication extends Application {
 <file path="app/src/main/java/com/example/hongkongpetownersapp/SecondFragment.java">
 package com.example.hongkongpetownersapp;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.hongkongpetownersapp.databinding.FragmentSecondBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class SecondFragment extends Fragment {
 
     private FragmentSecondBinding binding;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
 
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-
         binding = FragmentSecondBinding.inflate(inflater, container, false);
-        return binding.getRoot();
 
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+        return binding.getRoot();
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonSecond.setOnClickListener(v ->
-                NavHostFragment.findNavController(SecondFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment)
-        );
+        // Check if user is signed in
+        currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            // If not signed in, navigate back to login
+            navigateToLogin();
+            return;
+        }
+
+        // Display user info
+        displayUserInfo();
+
+        // Set logout button click listener
+        binding.buttonLogout.setOnClickListener(v -> showLogoutConfirmation());
+
+        // Set account settings button click listener
+        binding.buttonAccountSettings.setOnClickListener(v -> showAccountSettings());
+
+        // Set verify email button click listener
+        binding.buttonVerifyEmail.setOnClickListener(v -> sendVerificationEmail());
+
+        // Set feature button click listeners
+        setupFeatureButtons();
+    }
+
+    private void displayUserInfo() {
+        if (currentUser != null) {
+            // Display email
+            binding.textUserEmail.setText(currentUser.getEmail());
+
+            // Check email verification status
+            if (!currentUser.isEmailVerified()) {
+                binding.textVerificationStatus.setVisibility(View.VISIBLE);
+                binding.buttonVerifyEmail.setVisibility(View.VISIBLE);
+            } else {
+                binding.textVerificationStatus.setVisibility(View.GONE);
+                binding.buttonVerifyEmail.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void setupFeatureButtons() {
+        binding.buttonPetParks.setOnClickListener(v -> {
+            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+        });
+
+        binding.buttonPetAlbum.setOnClickListener(v -> {
+            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+        });
+
+        binding.buttonVaccineRecords.setOnClickListener(v -> {
+            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+        });
+
+        binding.buttonHealthReminders.setOnClickListener(v -> {
+            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void showAccountSettings() {
+        String[] options = {
+                getString(R.string.change_password),
+                getString(R.string.change_email),
+                getString(R.string.delete_account)
+        };
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.account_settings))
+                .setItems(options, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            changePassword();
+                            break;
+                        case 1:
+                            changeEmail();
+                            break;
+                        case 2:
+                            deleteAccount();
+                            break;
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
+    }
+
+    private void changePassword() {
+        if (currentUser != null && currentUser.getEmail() != null) {
+            mAuth.sendPasswordResetEmail(currentUser.getEmail())
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.password_reset_email_sent),
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.password_reset_failed),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+        }
+    }
+
+    private void changeEmail() {
+        Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+        // Implementation for email change would require re-authentication
+    }
+
+    private void deleteAccount() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.delete_account))
+                .setMessage(getString(R.string.delete_account_confirmation))
+                .setPositiveButton(getString(R.string.delete), (dialog, which) -> {
+                    if (currentUser != null) {
+                        currentUser.delete()
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getContext(),
+                                                getString(R.string.account_deleted),
+                                                Toast.LENGTH_SHORT).show();
+                                        navigateToLogin();
+                                    } else {
+                                        Toast.makeText(getContext(),
+                                                getString(R.string.delete_account_failed),
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
+    }
+
+    private void sendVerificationEmail() {
+        if (currentUser != null) {
+            currentUser.sendEmailVerification()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.verification_email_sent) + " " + currentUser.getEmail(),
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.verification_email_failed),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+        }
+    }
+
+    private void showLogoutConfirmation() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.logout_button))
+                .setMessage(getString(R.string.logout_confirmation))
+                .setPositiveButton(getString(R.string.logout_button), (dialog, which) -> {
+                    mAuth.signOut();
+                    Toast.makeText(getContext(), getString(R.string.logout_success), Toast.LENGTH_SHORT).show();
+                    navigateToLogin();
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
+    }
+
+    // Navigate to login screen
+    private void navigateToLogin() {
+        NavHostFragment.findNavController(SecondFragment.this)
+                .navigate(R.id.action_SecondFragment_to_FirstFragment);
     }
 
     @Override
@@ -513,7 +646,6 @@ public class SecondFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-
 }
 </file>
 
@@ -788,33 +920,121 @@ public class SecondFragment extends Fragment {
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".FirstFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
-
-        <Button
-            android:id="@+id/button_first"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/next"
-            app:layout_constraintBottom_toTopOf="@id/textview_first"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:padding="24dp">
 
         <TextView
-            android:id="@+id/textview_first"
+            android:id="@+id/text_app_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/lorem_ipsum"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/app_title"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="40dp"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_first" />
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_subtitle"
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/text_app_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:hint="@string/email_hint"
+            app:layout_constraintTop_toBottomOf="@id/text_subtitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/password_hint"
+            app:passwordToggleEnabled="true"
+            app:layout_constraintTop_toBottomOf="@id/layout_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/button_login"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/login_button"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/layout_password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/button_register"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/register_button"
+            android:textSize="16sp"
+            style="?attr/materialButtonOutlinedStyle"
+            app:layout_constraintTop_toBottomOf="@id/button_login"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_forgot_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/forgot_password"
+            android:textColor="@color/design_default_color_primary"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/button_register"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/text_forgot_password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
 </file>
@@ -826,33 +1046,183 @@ public class SecondFragment extends Fragment {
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".SecondFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
-
-        <Button
-            android:id="@+id/button_second"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/previous"
-            app:layout_constraintBottom_toTopOf="@id/textview_second"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:padding="24dp">
 
         <TextView
-            android:id="@+id/textview_second"
+            android:id="@+id/text_welcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/lorem_ipsum"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/welcome_message"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="40dp"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_second" />
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_user_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="user@example.com"
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/text_welcome"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_verification_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/email_not_verified"
+            android:textSize="14sp"
+            android:textColor="@color/design_default_color_error"
+            android:layout_marginTop="4dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/text_user_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/button_verify_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verify_email_button"
+            android:textSize="14sp"
+            android:visibility="gone"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/text_verification_status"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_features_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_features"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="40dp"
+            app:layout_constraintTop_toBottomOf="@id/button_verify_email"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/layout_features"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/text_features_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:id="@+id/button_pet_parks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="@string/pet_parks"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?attr/selectableItemBackground" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:id="@+id/button_pet_album"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="@string/pet_album"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?attr/selectableItemBackground" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:id="@+id/button_vaccine_records"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="@string/vaccine_records"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?attr/selectableItemBackground" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:id="@+id/button_health_reminders"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="@string/health_reminders"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?attr/selectableItemBackground" />
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/button_account_settings"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/account_settings"
+            android:textSize="16sp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/layout_features"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/button_logout"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/logout_button"
+            android:textSize="16sp"
+            style="?attr/materialButtonOutlinedStyle"
+            app:layout_constraintTop_toBottomOf="@id/button_account_settings"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
 </file>
@@ -975,50 +1345,84 @@ public class SecondFragment extends Fragment {
 
 <file path="app/src/main/res/values/strings.xml">
 <resources>
-    <string name="app_name">HongKongPetOwnersApp</string>
+    <!-- App Info -->
+    <string name="app_name">HK Pet Owners App</string>
+    <string name="app_title">HK Pet Owners</string>
     <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+
+    <!-- Fragment Labels -->
+    <string name="first_fragment_label">Login</string>
+    <string name="second_fragment_label">Home</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="lorem_ipsum">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
-        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
-        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
-        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
-        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
-        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n
-        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus
-        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed
-        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada
-        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,
-        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor
-        bibendum, vel congue leo egestas.\n\n
-        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit
-        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,
-        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer
-        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at
-        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,
-        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque
-        est.\n\n
-        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.
-        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui
-        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
-        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
-        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
-        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
-        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
-        convallis.\n\n
-        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
-        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
-        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
-        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
-        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
-        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
-        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
-    </string>
+    <!-- Login Screen -->
+    <string name="login_subtitle">Please sign in to your account</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button">Sign In</string>
+    <string name="register_button">Create Account</string>
+    <string name="forgot_password">Forgot Password</string>
+
+    <!-- Validation Messages -->
+    <string name="email_required">Email is required</string>
+    <string name="email_required_for_reset">Please enter your email to reset password</string>
+    <string name="email_invalid">Please enter a valid email</string>
+    <string name="password_required">Password is required</string>
+    <string name="password_too_short">Password must be at least 6 characters</string>
+
+    <!-- Login Messages -->
+    <string name="login_success">Welcome back!</string>
+    <string name="login_failed">Login failed:</string>
+    <string name="user_not_found">Account not found</string>
+    <string name="wrong_password">Incorrect password</string>
+    <string name="account_disabled">Account has been disabled</string>
+    <string name="check_credentials">Please check your credentials</string>
+
+    <!-- Registration Messages -->
+    <string name="register_success">Registration successful! Welcome</string>
+    <string name="register_failed">Registration failed:</string>
+    <string name="email_already_used">This email is already registered</string>
+    <string name="try_again_later">Please try again later</string>
+
+    <!-- Email Verification -->
+    <string name="please_verify_email">Please verify your email address</string>
+    <string name="verification_email_sent">Verification email sent to</string>
+    <string name="verification_email_failed">Failed to send verification email</string>
+    <string name="email_not_verified">Email not verified</string>
+    <string name="verify_email_button">Send Verification Email</string>
+
+    <!-- Password Reset -->
+    <string name="password_reset_email_sent">Password reset email sent! Check your inbox</string>
+    <string name="password_reset_failed">Failed to send password reset email</string>
+
+    <!-- Main Screen -->
+    <string name="welcome_message">Welcome to HK Pet Owners App</string>
+    <string name="main_features">Features</string>
+    <string name="pet_parks">Find Pet Parks</string>
+    <string name="pet_album">Pet Album</string>
+    <string name="vaccine_records">Vaccine Records</string>
+    <string name="health_reminders">Health Reminders</string>
+    <string name="feature_coming_soon">This feature is coming soon</string>
+
+    <!-- Account Management -->
+    <string name="account_settings">Account Settings</string>
+    <string name="change_password">Change Password</string>
+    <string name="change_email">Change Email</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="delete_account_confirmation">Are you sure you want to delete your account?</string>
+    <string name="account_deleted">Account deleted successfully</string>
+    <string name="delete_account_failed">Failed to delete account. Please re-login and try again.</string>
+
+    <!-- Logout -->
+    <string name="logout_button">Sign Out</string>
+    <string name="logout_confirmation">Are you sure you want to sign out?</string>
+    <string name="logout_success">Successfully signed out</string>
+
+    <!-- General -->
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="confirm">Confirm</string>
 </resources>
 </file>
 
@@ -1092,23 +1496,6 @@ public class ExampleUnitTest {
 }
 </file>
 
-<file path="build.gradle">
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.google.gms:google-services:4.4.0'
-    }
-}
-
-plugins {
-    alias(libs.plugins.android.application) apply false
-}
-</file>
-
 <file path="gradle.properties">
 # Project-wide Gradle settings.
 # IDE (e.g. Android Studio) users:
@@ -1144,6 +1531,10 @@ material = "1.10.0"
 constraintlayout = "2.1.4"
 navigationFragment = "2.6.0"
 navigationUi = "2.6.0"
+firebaseAuth = "23.2.1"
+credentials = "1.5.0"
+credentialsPlayServicesAuth = "1.5.0"
+googleid = "1.1.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -1154,6 +1545,10 @@ material = { group = "com.google.android.material", name = "material", version.r
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -1472,6 +1867,257 @@ dependencyResolutionManagement {
 
 rootProject.name = "HongKongPetOwnersApp"
 include ':app'
+</file>
+
+<file path="app/build.gradle">
+plugins {
+    alias(libs.plugins.android.application)
+    id 'com.google.gms.google-services'
+}
+
+android {
+    namespace 'com.example.hongkongpetownersapp'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.example.hongkongpetownersapp"
+        minSdk 31
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.constraintlayout
+    implementation libs.navigation.fragment
+    implementation libs.navigation.ui
+
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-storage'
+    implementation libs.credentials
+    implementation libs.credentials.play.services.auth
+    implementation libs.googleid
+
+    // just test
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}
+</file>
+
+<file path="app/google-services.json">
+{
+  "project_info": {
+    "project_number": "95346719638",
+    "project_id": "hkpetownersapp",
+    "storage_bucket": "hkpetownersapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95346719638:android:f65c46cf2f2f5fc1103bb7",
+        "android_client_info": {
+          "package_name": "com.example.hongkongpetownersapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh7FasyU-3yeYo8_3Adseii3tvHQzSnvk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+</file>
+
+<file path="app/src/main/AndroidManifest.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.HongKongPetOwnersApp"
+        tools:targetApi="31">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.HongKongPetOwnersApp">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/MainActivity.java">
+package com.example.hongkongpetownersapp;
+
+import android.os.Bundle;
+import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
+import com.example.hongkongpetownersapp.databinding.ActivityMainBinding;
+
+public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
+    private AppBarConfiguration appBarConfiguration;
+    private ActivityMainBinding binding;
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+    private NavController navController;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.toolbar);
+
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+
+        // Initialize Firebase
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
+        // Listen to navigation changes
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.FirstFragment) {
+                // Hide FloatingActionButton on login screen
+                binding.fab.hide();
+            } else {
+                // Show FloatingActionButton on other screens
+                binding.fab.show();
+            }
+        });
+
+        binding.fab.setOnClickListener(view -> {
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser != null) {
+                Snackbar.make(view, "Quick action button", Snackbar.LENGTH_LONG)
+                        .setAnchorView(R.id.fab)
+                        .show();
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
+                || super.onSupportNavigateUp();
+    }
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/MyApplication.java">
+package com.example.hongkongpetownersapp;
+
+import android.app.Application;
+import com.google.firebase.FirebaseApp;
+
+public class MyApplication extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        FirebaseApp.initializeApp(this);
+    }
+}
+</file>
+
+<file path="build.gradle">
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.gms:google-services:4.4.0'
+    }
+}
+
+plugins {
+    alias(libs.plugins.android.application) apply false
+}
 </file>
 
 </files>

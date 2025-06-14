@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.application)
-    // 添加 Google Services plugin
     id 'com.google.gms.google-services'
 }
 
@@ -34,23 +33,23 @@ android {
 }
 
 dependencies {
-    // 原有的依賴
     implementation libs.appcompat
     implementation libs.material
     implementation libs.constraintlayout
     implementation libs.navigation.fragment
     implementation libs.navigation.ui
 
-    // Firebase BOM - 管理所有 Firebase 庫的版本
     implementation platform('com.google.firebase:firebase-bom:32.7.0')
 
-    // Firebase 依賴（不需要指定版本，BOM 會自動管理）
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-storage'
+    implementation libs.credentials
+    implementation libs.credentials.play.services.auth
+    implementation libs.googleid
 
-    // 測試依賴
+    // just test
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
