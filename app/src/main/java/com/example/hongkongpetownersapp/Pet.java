@@ -11,8 +11,8 @@ public class Pet {
     private int age;
     private String breed;
     private String gender;
+    private String photoUrl;
 
-    // Empty constructor for Firestore
     public Pet() {}
 
     // Basic constructor
@@ -39,7 +39,6 @@ public class Pet {
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
 
-    // getters and setters
     public int getAge() { return age; }
     public void setAge(int age) { this.age = age; }
 
@@ -48,4 +47,7 @@ public class Pet {
 
     public String getGender() { return gender; }
     public void setGender(String gender) { this.gender = gender; }
+
+    public String getPhotoUrl() { return photoUrl; }
+    public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
 }

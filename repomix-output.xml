@@ -1,0 +1,3878 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+app/.gitignore
+app/build.gradle
+app/google-services.json
+app/proguard-rules.pro
+app/src/androidTest/java/com/example/hongkongpetownersapp/ExampleInstrumentedTest.java
+app/src/main/AndroidManifest.xml
+app/src/main/java/com/example/hongkongpetownersapp/AddPetFragment.java
+app/src/main/java/com/example/hongkongpetownersapp/CameraFragment.java
+app/src/main/java/com/example/hongkongpetownersapp/FirstFragment.java
+app/src/main/java/com/example/hongkongpetownersapp/MainActivity.java
+app/src/main/java/com/example/hongkongpetownersapp/MyApplication.java
+app/src/main/java/com/example/hongkongpetownersapp/Pet.java
+app/src/main/java/com/example/hongkongpetownersapp/PetAdapter.java
+app/src/main/java/com/example/hongkongpetownersapp/PetDetailFragment.java
+app/src/main/java/com/example/hongkongpetownersapp/PetListFragment.java
+app/src/main/java/com/example/hongkongpetownersapp/SecondFragment.java
+app/src/main/res/drawable/camera_button_background.xml
+app/src/main/res/drawable/ic_launcher_background.xml
+app/src/main/res/drawable/ic_launcher_foreground.xml
+app/src/main/res/layout/activity_main.xml
+app/src/main/res/layout/content_main.xml
+app/src/main/res/layout/fragment_add_pet.xml
+app/src/main/res/layout/fragment_camera.xml
+app/src/main/res/layout/fragment_first.xml
+app/src/main/res/layout/fragment_pet_detail.xml
+app/src/main/res/layout/fragment_pet_list.xml
+app/src/main/res/layout/fragment_second.xml
+app/src/main/res/layout/item_pet.xml
+app/src/main/res/menu/menu_main.xml
+app/src/main/res/mipmap-anydpi/ic_launcher_round.xml
+app/src/main/res/mipmap-anydpi/ic_launcher.xml
+app/src/main/res/navigation/nav_graph.xml
+app/src/main/res/values-land/dimens.xml
+app/src/main/res/values-night/themes.xml
+app/src/main/res/values-v23/themes.xml
+app/src/main/res/values-w1240dp/dimens.xml
+app/src/main/res/values-w600dp/dimens.xml
+app/src/main/res/values/colors.xml
+app/src/main/res/values/dimens.xml
+app/src/main/res/values/strings.xml
+app/src/main/res/values/themes.xml
+app/src/main/res/xml/backup_rules.xml
+app/src/main/res/xml/data_extraction_rules.xml
+app/src/test/java/com/example/hongkongpetownersapp/ExampleUnitTest.java
+build.gradle
+gradle.properties
+gradle/libs.versions.toml
+gradle/wrapper/gradle-wrapper.properties
+gradlew
+gradlew.bat
+settings.gradle
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".gitignore">
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+</file>
+
+<file path="app/.gitignore">
+/build
+</file>
+
+<file path="app/proguard-rules.pro">
+# Add project specific ProGuard rules here.
+# You can control the set of applied configuration files using the
+# proguardFiles setting in build.gradle.
+#
+# For more details, see
+#   http://developer.android.com/guide/developing/tools/proguard.html
+
+# If your project uses WebView with JS, uncomment the following
+# and specify the fully qualified class name to the JavaScript interface
+# class:
+#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+#   public *;
+#}
+
+# Uncomment this to preserve the line number information for
+# debugging stack traces.
+#-keepattributes SourceFile,LineNumberTable
+
+# If you keep the line number information, uncomment this to
+# hide the original source file name.
+#-renamesourcefileattribute SourceFile
+</file>
+
+<file path="app/src/androidTest/java/com/example/hongkongpetownersapp/ExampleInstrumentedTest.java">
+package com.example.hongkongpetownersapp;
+
+import android.content.Context;
+
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.*;
+
+/**
+ * Instrumented test, which will execute on an Android device.
+ *
+ * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ */
+@RunWith(AndroidJUnit4.class)
+public class ExampleInstrumentedTest {
+    @Test
+    public void useAppContext() {
+        // Context of the app under test.
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        assertEquals("com.example.hongkongpetownersapp", appContext.getPackageName());
+    }
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/AddPetFragment.java">
+package com.example.hongkongpetownersapp;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.example.hongkongpetownersapp.databinding.FragmentAddPetBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+public class AddPetFragment extends Fragment {
+
+    private static final String TAG = "AddPetFragment";
+    private FragmentAddPetBinding binding;
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState
+    ) {
+        binding = FragmentAddPetBinding.inflate(inflater, container, false);
+
+        // Initialize Firebase
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
+        return binding.getRoot();
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Check authentication
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.FirstFragment);
+            return;
+        }
+
+        // Set default selection
+        binding.radioDog.setChecked(true);
+
+        // Setup click listeners
+        binding.buttonSave.setOnClickListener(v -> savePet());
+        binding.buttonCancel.setOnClickListener(v -> navigateBack());
+    }
+
+    private void savePet() {
+        // Get pet name
+        String petName = binding.editPetName.getText().toString().trim();
+
+        // Validate input
+        if (TextUtils.isEmpty(petName)) {
+            binding.layoutPetName.setError(getString(R.string.pet_name_required));
+            return;
+        }
+
+        // Get selected pet type
+        String petType = getSelectedPetType();
+
+        // Get current user
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) return;
+
+        // Show progress
+        showLoading(true);
+
+        // Create new pet
+        Pet newPet = new Pet(petName, petType, currentUser.getUid());
+
+        // Save to Firestore
+        db.collection("pets")
+                .add(newPet)
+                .addOnSuccessListener(documentReference -> {
+                    showLoading(false);
+                    Log.d(TAG, "Pet added with ID: " + documentReference.getId());
+                    Toast.makeText(getContext(),
+                            getString(R.string.pet_added_success),
+                            Toast.LENGTH_SHORT).show();
+                    navigateBack();
+                })
+                .addOnFailureListener(e -> {
+                    showLoading(false);
+                    Log.e(TAG, "Error adding pet", e);
+                    Toast.makeText(getContext(),
+                            getString(R.string.error_adding_pet),
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private String getSelectedPetType() {
+        int selectedId = binding.radioGroupPetType.getCheckedRadioButtonId();
+
+        if (selectedId == R.id.radio_dog) return "Dog";
+        else if (selectedId == R.id.radio_cat) return "Cat";
+        else if (selectedId == R.id.radio_bird) return "Bird";
+        else if (selectedId == R.id.radio_fish) return "Fish";
+        else if (selectedId == R.id.radio_rabbit) return "Rabbit";
+        else return "Other";
+    }
+
+    private void showLoading(boolean show) {
+        if (show) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.buttonSave.setEnabled(false);
+            binding.buttonCancel.setEnabled(false);
+        } else {
+            binding.progressBar.setVisibility(View.GONE);
+            binding.buttonSave.setEnabled(true);
+            binding.buttonCancel.setEnabled(true);
+        }
+    }
+
+    private void navigateBack() {
+        NavHostFragment.findNavController(this).navigateUp();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/CameraFragment.java">
+package com.example.hongkongpetownersapp;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.Preview;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.example.hongkongpetownersapp.databinding.FragmentCameraBinding;
+import com.google.common.util.concurrent.ListenableFuture;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+
+public class CameraFragment extends Fragment {
+
+    private static final String TAG = "CameraFragment";
+    private FragmentCameraBinding binding;
+    private ImageCapture imageCapture;
+    private String petId;
+
+    // request the permission
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    startCamera();
+                } else {
+                    Toast.makeText(getContext(),
+                            "Camera permission is required to take photos",
+                            Toast.LENGTH_LONG).show();
+                    navigateBack();
+                }
+            });
+
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState
+    ) {
+        binding = FragmentCameraBinding.inflate(inflater, container, false);
+
+        if (getArguments() != null) {
+            petId = getArguments().getString("petId");
+        }
+
+        return binding.getRoot();
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            startCamera();
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+        }
+
+        // set the action if click camera button
+        binding.buttonCapture.setOnClickListener(v -> takePhoto());
+        binding.buttonClose.setOnClickListener(v -> navigateBack());
+    }
+
+    private void startCamera() {
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
+                ProcessCameraProvider.getInstance(requireContext());
+
+        cameraProviderFuture.addListener(() -> {
+            try {
+                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                bindPreview(cameraProvider);
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e(TAG, "Error starting camera", e);
+                Toast.makeText(getContext(),
+                        "Error starting camera",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }, ContextCompat.getMainExecutor(requireContext()));
+    }
+
+    private void bindPreview(ProcessCameraProvider cameraProvider) {
+        // 預覽
+        Preview preview = new Preview.Builder().build();
+        preview.setSurfaceProvider(binding.previewView.getSurfaceProvider());
+
+        // 拍照
+        imageCapture = new ImageCapture.Builder()
+                .setTargetRotation(requireActivity().getWindowManager().getDefaultDisplay().getRotation())
+                .build();
+
+        // 選擇後置相機
+        CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+
+        try {
+            // 解除所有綁定
+            cameraProvider.unbindAll();
+
+            // 綁定到生命週期
+            cameraProvider.bindToLifecycle(
+                    this, cameraSelector, preview, imageCapture);
+
+        } catch (Exception e) {
+            Log.e(TAG, "Use case binding failed", e);
+        }
+    }
+
+    private void takePhoto() {
+        if (imageCapture == null) {
+            return;
+        }
+
+        // 顯示進度條
+        binding.progressBar.setVisibility(View.VISIBLE);
+        binding.buttonCapture.setEnabled(false);
+
+        // 創建檔案名稱
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+                .format(System.currentTimeMillis());
+        String fileName = "pet_" + petId + "_" + timestamp + ".jpg";
+
+        // 創建檔案
+        File photoFile = new File(requireContext().getFilesDir(), fileName);
+
+        // 設定輸出選項
+        ImageCapture.OutputFileOptions outputOptions =
+                new ImageCapture.OutputFileOptions.Builder(photoFile).build();
+
+        // 拍照
+        imageCapture.takePicture(
+                outputOptions,
+                ContextCompat.getMainExecutor(requireContext()),
+                new ImageCapture.OnImageSavedCallback() {
+                    @Override
+                    public void onImageSaved(@NonNull ImageCapture.OutputFileResults output) {
+                        binding.progressBar.setVisibility(View.GONE);
+                        binding.buttonCapture.setEnabled(true);
+
+                        Uri savedUri = Uri.fromFile(photoFile);
+                        Log.d(TAG, "Photo saved: " + savedUri);
+
+                        // 傳遞照片路徑回上一頁
+                        Bundle result = new Bundle();
+                        result.putString("photoUri", savedUri.toString());
+                        result.putString("photoPath", photoFile.getAbsolutePath());
+                        getParentFragmentManager().setFragmentResult("photoResult", result);
+
+                        Toast.makeText(getContext(),
+                                "Photo saved successfully",
+                                Toast.LENGTH_SHORT).show();
+
+                        navigateBack();
+                    }
+
+                    @Override
+                    public void onError(@NonNull ImageCaptureException exception) {
+                        binding.progressBar.setVisibility(View.GONE);
+                        binding.buttonCapture.setEnabled(true);
+
+                        Log.e(TAG, "Photo capture failed", exception);
+                        Toast.makeText(getContext(),
+                                "Failed to save photo",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
+
+    private void navigateBack() {
+        NavHostFragment.findNavController(this).navigateUp();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/PetListFragment.java">
+package com.example.hongkongpetownersapp;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.example.hongkongpetownersapp.databinding.FragmentPetListBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class PetListFragment extends Fragment {
+
+    private static final String TAG = "PetListFragment";
+    private FragmentPetListBinding binding;
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+    private PetAdapter petAdapter;
+    private List<Pet> petList = new ArrayList<>();
+
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState
+    ) {
+        binding = FragmentPetListBinding.inflate(inflater, container, false);
+
+        // Initialize Firebase
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
+        return binding.getRoot();
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Check authentication
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.FirstFragment);
+            return;
+        }
+
+        // Setup RecyclerView
+        setupRecyclerView();
+
+        // Setup click listeners
+        binding.fabAddPet.setOnClickListener(v -> navigateToAddPet());
+        binding.buttonAddFirstPet.setOnClickListener(v -> navigateToAddPet());
+
+        // Load pets
+        loadPets();
+    }
+
+    private void setupRecyclerView() {
+        petAdapter = new PetAdapter(petList);
+        binding.recyclerViewPets.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerViewPets.setAdapter(petAdapter);
+    }
+
+    private void loadPets() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) return;
+
+        binding.progressBar.setVisibility(View.VISIBLE);
+
+        db.collection("pets")
+                .whereEqualTo("ownerId", currentUser.getUid())
+                .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    binding.progressBar.setVisibility(View.GONE);
+                    petList.clear();
+
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Pet pet = document.toObject(Pet.class);
+                        pet.setId(document.getId());
+                        petList.add(pet);
+                    }
+
+                    petAdapter.notifyDataSetChanged();
+                    updateEmptyState();
+                })
+                .addOnFailureListener(e -> {
+                    binding.progressBar.setVisibility(View.GONE);
+                    Log.e(TAG, "Error loading pets", e);
+                    Toast.makeText(getContext(),
+                            getString(R.string.error_loading_pets),
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void updateEmptyState() {
+        if (petList.isEmpty()) {
+            binding.emptyState.setVisibility(View.VISIBLE);
+            binding.recyclerViewPets.setVisibility(View.GONE);
+        } else {
+            binding.emptyState.setVisibility(View.GONE);
+            binding.recyclerViewPets.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void navigateToAddPet() {
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.action_petListFragment_to_addPetFragment);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}
+</file>
+
+<file path="app/src/main/res/drawable/camera_button_background.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/white" />
+    <stroke
+        android:width="4dp"
+        android:color="#CCCCCC" />
+</shape>
+</file>
+
+<file path="app/src/main/res/drawable/ic_launcher_background.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#3DDC84"
+        android:pathData="M0,0h108v108h-108z" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M9,0L9,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,0L19,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M29,0L29,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M39,0L39,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M49,0L49,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M59,0L59,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M69,0L69,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M79,0L79,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M89,0L89,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M99,0L99,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,9L108,9"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,19L108,19"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,29L108,29"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,39L108,39"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,49L108,49"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,59L108,59"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,69L108,69"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,79L108,79"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,89L108,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,99L108,99"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,29L89,29"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,39L89,39"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,49L89,49"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,59L89,59"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,69L89,69"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,79L89,79"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M29,19L29,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M39,19L39,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M49,19L49,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M59,19L59,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M69,19L69,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M79,19L79,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+</vector>
+</file>
+
+<file path="app/src/main/res/drawable/ic_launcher_foreground.xml">
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="85.84757"
+                android:endY="92.4963"
+                android:startX="42.9492"
+                android:startY="49.59793"
+                android:type="linear">
+                <item
+                    android:color="#44000000"
+                    android:offset="0.0" />
+                <item
+                    android:color="#00000000"
+                    android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="nonZero"
+        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
+        android:strokeWidth="1"
+        android:strokeColor="#00000000" />
+</vector>
+</file>
+
+<file path="app/src/main/res/layout/activity_main.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/content_main" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="16dp"
+        app:srcCompat="@android:drawable/ic_dialog_email" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</file>
+
+<file path="app/src/main/res/layout/content_main.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <fragment
+        android:id="@+id/nav_host_fragment_content_main"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/nav_graph" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+</file>
+
+<file path="app/src/main/res/layout/fragment_add_pet.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".AddPetFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_new_pet"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Pet Name Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_pet_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/pet_name_hint"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_pet_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Pet Type Selection -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pet_type"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/radio_group_pet_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/radio_dog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🐕 Dog"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <RadioButton
+                android:id="@+id/radio_cat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🐈 Cat"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <RadioButton
+                android:id="@+id/radio_bird"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🦜 Bird"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <RadioButton
+                android:id="@+id/radio_fish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🐠 Fish"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <RadioButton
+                android:id="@+id/radio_rabbit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🐰 Rabbit"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <RadioButton
+                android:id="@+id/radio_other"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🐾 Other"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+        </RadioGroup>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/button_save"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/save_pet"
+            android:textSize="16sp" />
+
+        <!-- Cancel Button -->
+        <Button
+            android:id="@+id/button_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/cancel"
+            android:textSize="16sp"
+            style="?attr/materialButtonOutlinedStyle" />
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</ScrollView>
+</file>
+
+<file path="app/src/main/res/layout/fragment_camera.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".CameraFragment">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- top tools -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#80000000"
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/button_close"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:tint="@color/white" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/take_photo"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_gravity="center_vertical" />
+
+        <View
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:orientation="horizontal"
+        android:background="#80000000"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- camera button -->
+        <ImageButton
+            android:id="@+id/button_capture"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/camera_button_background"
+            android:src="@android:drawable/ic_menu_camera"
+            android:tint="@color/white"
+            android:scaleType="centerInside"
+            android:padding="20dp" />
+
+    </LinearLayout>
+
+    <!-- loading -->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</file>
+
+<file path="app/src/main/res/layout/item_pet.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Pet Photo/Icon Container -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="0dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- Pet Icon (default) -->
+                <TextView
+                    android:id="@+id/text_pet_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="🐕"
+                    android:textSize="32sp"
+                    android:gravity="center"
+                    android:background="#F0F0F0" />
+
+                <!-- Pet Photo -->
+                <ImageView
+                    android:id="@+id/image_pet_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Pet Info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_pet_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pet Name"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/text_pet_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pet Type"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
+</file>
+
+<file path="app/src/main/res/menu/menu_main.xml">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.hongkongpetownersapp.MainActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+</menu>
+</file>
+
+<file path="app/src/main/res/mipmap-anydpi/ic_launcher_round.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>
+</file>
+
+<file path="app/src/main/res/mipmap-anydpi/ic_launcher.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>
+</file>
+
+<file path="app/src/main/res/values-land/dimens.xml">
+<resources>
+    <dimen name="fab_margin">48dp</dimen>
+</resources>
+</file>
+
+<file path="app/src/main/res/values-night/themes.xml">
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.HongKongPetOwnersApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    </style>
+</resources>
+</file>
+
+<file path="app/src/main/res/values-v23/themes.xml">
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.HongKongPetOwnersApp" parent="Base.Theme.HongKongPetOwnersApp">
+        <!-- Transparent system bars for edge-to-edge. -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+    </style>
+</resources>
+</file>
+
+<file path="app/src/main/res/values-w1240dp/dimens.xml">
+<resources>
+    <dimen name="fab_margin">200dp</dimen>
+</resources>
+</file>
+
+<file path="app/src/main/res/values-w600dp/dimens.xml">
+<resources>
+    <dimen name="fab_margin">48dp</dimen>
+</resources>
+</file>
+
+<file path="app/src/main/res/values/colors.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>
+</file>
+
+<file path="app/src/main/res/values/dimens.xml">
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+</resources>
+</file>
+
+<file path="app/src/main/res/values/themes.xml">
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.HongKongPetOwnersApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.HongKongPetOwnersApp" parent="Base.Theme.HongKongPetOwnersApp" />
+</resources>
+</file>
+
+<file path="app/src/main/res/xml/backup_rules.xml">
+<?xml version="1.0" encoding="utf-8"?><!--
+   Sample backup rules file; uncomment and customize as necessary.
+   See https://developer.android.com/guide/topics/data/autobackup
+   for details.
+   Note: This file is ignored for devices older that API 31
+   See https://developer.android.com/about/versions/12/backup-restore
+-->
+<full-backup-content>
+    <!--
+   <include domain="sharedpref" path="."/>
+   <exclude domain="sharedpref" path="device.xml"/>
+-->
+</full-backup-content>
+</file>
+
+<file path="app/src/main/res/xml/data_extraction_rules.xml">
+<?xml version="1.0" encoding="utf-8"?><!--
+   Sample data extraction rules file; uncomment and customize as necessary.
+   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
+   for details.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- TODO: Use <include> and <exclude> to control what is backed up.
+        <include .../>
+        <exclude .../>
+        -->
+    </cloud-backup>
+    <!--
+    <device-transfer>
+        <include .../>
+        <exclude .../>
+    </device-transfer>
+    -->
+</data-extraction-rules>
+</file>
+
+<file path="app/src/test/java/com/example/hongkongpetownersapp/ExampleUnitTest.java">
+package com.example.hongkongpetownersapp;
+
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ */
+public class ExampleUnitTest {
+    @Test
+    public void addition_isCorrect() {
+        assertEquals(4, 2 + 2);
+    }
+}
+</file>
+
+<file path="gradle.properties">
+# Project-wide Gradle settings.
+# IDE (e.g. Android Studio) users:
+# Gradle settings configured through the IDE *will override*
+# any settings specified in this file.
+# For more details on how to configure your build environment visit
+# http://www.gradle.org/docs/current/userguide/build_environment.html
+# Specifies the JVM arguments used for the daemon process.
+# The setting is particularly useful for tweaking memory settings.
+org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+# When configured, Gradle will run in incubating parallel mode.
+# This option should only be used with decoupled projects. For more details, visit
+# https://developer.android.com/r/tools/gradle-multi-project-decoupled-projects
+# org.gradle.parallel=true
+# AndroidX package structure to make it clearer which packages are bundled with the
+# Android operating system, and which are packaged with your app's APK
+# https://developer.android.com/topic/libraries/support-library/androidx-rn
+android.useAndroidX=true
+# Enables namespacing of each library's R class so that its R class includes only the
+# resources declared in the library itself and none from the library's dependencies,
+# thereby reducing the size of the R class for that library
+android.nonTransitiveRClass=true
+</file>
+
+<file path="gradle/wrapper/gradle-wrapper.properties">
+#Thu Jun 12 12:34:39 HKT 2025
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.10.2-bin.zip
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+</file>
+
+<file path="gradlew">
+#!/usr/bin/env sh
+
+#
+# Copyright 2015 the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+##############################################################################
+##
+##  Gradle start up script for UN*X
+##
+##############################################################################
+
+# Attempt to set APP_HOME
+# Resolve links: $0 may be a link
+PRG="$0"
+# Need this for relative symlinks.
+while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '/.*' > /dev/null; then
+        PRG="$link"
+    else
+        PRG=`dirname "$PRG"`"/$link"
+    fi
+done
+SAVED="`pwd`"
+cd "`dirname \"$PRG\"`/" >/dev/null
+APP_HOME="`pwd -P`"
+cd "$SAVED" >/dev/null
+
+APP_NAME="Gradle"
+APP_BASE_NAME=`basename "$0"`
+
+# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+
+# Use the maximum available, or set MAX_FD != -1 to use that value.
+MAX_FD="maximum"
+
+warn () {
+    echo "$*"
+}
+
+die () {
+    echo
+    echo "$*"
+    echo
+    exit 1
+}
+
+# OS specific support (must be 'true' or 'false').
+cygwin=false
+msys=false
+darwin=false
+nonstop=false
+case "`uname`" in
+  CYGWIN* )
+    cygwin=true
+    ;;
+  Darwin* )
+    darwin=true
+    ;;
+  MINGW* )
+    msys=true
+    ;;
+  NONSTOP* )
+    nonstop=true
+    ;;
+esac
+
+CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
+
+
+# Determine the Java command to use to start the JVM.
+if [ -n "$JAVA_HOME" ] ; then
+    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+        # IBM's JDK on AIX uses strange locations for the executables
+        JAVACMD="$JAVA_HOME/jre/sh/java"
+    else
+        JAVACMD="$JAVA_HOME/bin/java"
+    fi
+    if [ ! -x "$JAVACMD" ] ; then
+        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
+
+Please set the JAVA_HOME variable in your environment to match the
+location of your Java installation."
+    fi
+else
+    JAVACMD="java"
+    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+
+Please set the JAVA_HOME variable in your environment to match the
+location of your Java installation."
+fi
+
+# Increase the maximum file descriptors if we can.
+if [ "$cygwin" = "false" -a "$darwin" = "false" -a "$nonstop" = "false" ] ; then
+    MAX_FD_LIMIT=`ulimit -H -n`
+    if [ $? -eq 0 ] ; then
+        if [ "$MAX_FD" = "maximum" -o "$MAX_FD" = "max" ] ; then
+            MAX_FD="$MAX_FD_LIMIT"
+        fi
+        ulimit -n $MAX_FD
+        if [ $? -ne 0 ] ; then
+            warn "Could not set maximum file descriptor limit: $MAX_FD"
+        fi
+    else
+        warn "Could not query maximum file descriptor limit: $MAX_FD_LIMIT"
+    fi
+fi
+
+# For Darwin, add options to specify how the application appears in the dock
+if $darwin; then
+    GRADLE_OPTS="$GRADLE_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/gradle.icns\""
+fi
+
+# For Cygwin or MSYS, switch paths to Windows format before running java
+if [ "$cygwin" = "true" -o "$msys" = "true" ] ; then
+    APP_HOME=`cygpath --path --mixed "$APP_HOME"`
+    CLASSPATH=`cygpath --path --mixed "$CLASSPATH"`
+
+    JAVACMD=`cygpath --unix "$JAVACMD"`
+
+    # We build the pattern for arguments to be converted via cygpath
+    ROOTDIRSRAW=`find -L / -maxdepth 1 -mindepth 1 -type d 2>/dev/null`
+    SEP=""
+    for dir in $ROOTDIRSRAW ; do
+        ROOTDIRS="$ROOTDIRS$SEP$dir"
+        SEP="|"
+    done
+    OURCYGPATTERN="(^($ROOTDIRS))"
+    # Add a user-defined pattern to the cygpath arguments
+    if [ "$GRADLE_CYGPATTERN" != "" ] ; then
+        OURCYGPATTERN="$OURCYGPATTERN|($GRADLE_CYGPATTERN)"
+    fi
+    # Now convert the arguments - kludge to limit ourselves to /bin/sh
+    i=0
+    for arg in "$@" ; do
+        CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
+        CHECK2=`echo "$arg"|egrep -c "^-"`                                 ### Determine if an option
+
+        if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
+            eval `echo args$i`=`cygpath --path --ignore --mixed "$arg"`
+        else
+            eval `echo args$i`="\"$arg\""
+        fi
+        i=`expr $i + 1`
+    done
+    case $i in
+        0) set -- ;;
+        1) set -- "$args0" ;;
+        2) set -- "$args0" "$args1" ;;
+        3) set -- "$args0" "$args1" "$args2" ;;
+        4) set -- "$args0" "$args1" "$args2" "$args3" ;;
+        5) set -- "$args0" "$args1" "$args2" "$args3" "$args4" ;;
+        6) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" ;;
+        7) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" ;;
+        8) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" ;;
+        9) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" "$args8" ;;
+    esac
+fi
+
+# Escape application args
+save () {
+    for i do printf %s\\n "$i" | sed "s/'/'\\\\''/g;1s/^/'/;\$s/\$/' \\\\/" ; done
+    echo " "
+}
+APP_ARGS=`save "$@"`
+
+# Collect all arguments for the java command, following the shell quoting and substitution rules
+eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS "\"-Dorg.gradle.appname=$APP_BASE_NAME\"" -classpath "\"$CLASSPATH\"" org.gradle.wrapper.GradleWrapperMain "$APP_ARGS"
+
+exec "$JAVACMD" "$@"
+</file>
+
+<file path="gradlew.bat">
+@rem
+@rem Copyright 2015 the original author or authors.
+@rem
+@rem Licensed under the Apache License, Version 2.0 (the "License");
+@rem you may not use this file except in compliance with the License.
+@rem You may obtain a copy of the License at
+@rem
+@rem      https://www.apache.org/licenses/LICENSE-2.0
+@rem
+@rem Unless required by applicable law or agreed to in writing, software
+@rem distributed under the License is distributed on an "AS IS" BASIS,
+@rem WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+@rem See the License for the specific language governing permissions and
+@rem limitations under the License.
+@rem
+
+@if "%DEBUG%" == "" @echo off
+@rem ##########################################################################
+@rem
+@rem  Gradle startup script for Windows
+@rem
+@rem ##########################################################################
+
+@rem Set local scope for the variables with windows NT shell
+if "%OS%"=="Windows_NT" setlocal
+
+set DIRNAME=%~dp0
+if "%DIRNAME%" == "" set DIRNAME=.
+set APP_BASE_NAME=%~n0
+set APP_HOME=%DIRNAME%
+
+@rem Resolve any "." and ".." in APP_HOME to make it shorter.
+for %%i in ("%APP_HOME%") do set APP_HOME=%%~fi
+
+@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m"
+
+@rem Find java.exe
+if defined JAVA_HOME goto findJavaFromJavaHome
+
+set JAVA_EXE=java.exe
+%JAVA_EXE% -version >NUL 2>&1
+if "%ERRORLEVEL%" == "0" goto execute
+
+echo.
+echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+echo.
+echo Please set the JAVA_HOME variable in your environment to match the
+echo location of your Java installation.
+
+goto fail
+
+:findJavaFromJavaHome
+set JAVA_HOME=%JAVA_HOME:"=%
+set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+
+if exist "%JAVA_EXE%" goto execute
+
+echo.
+echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
+echo.
+echo Please set the JAVA_HOME variable in your environment to match the
+echo location of your Java installation.
+
+goto fail
+
+:execute
+@rem Setup the command line
+
+set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
+
+
+@rem Execute Gradle
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %*
+
+:end
+@rem End local scope for the variables with windows NT shell
+if "%ERRORLEVEL%"=="0" goto mainEnd
+
+:fail
+rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
+rem the _cmd.exe /c_ return code!
+if  not "" == "%GRADLE_EXIT_CONSOLE%" exit 1
+exit /b 1
+
+:mainEnd
+if "%OS%"=="Windows_NT" endlocal
+
+:omega
+</file>
+
+<file path="settings.gradle">
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "HongKongPetOwnersApp"
+include ':app'
+</file>
+
+<file path="app/google-services.json">
+{
+  "project_info": {
+    "project_number": "95346719638",
+    "project_id": "hkpetownersapp",
+    "storage_bucket": "hkpetownersapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95346719638:android:f65c46cf2f2f5fc1103bb7",
+        "android_client_info": {
+          "package_name": "com.example.hongkongpetownersapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh7FasyU-3yeYo8_3Adseii3tvHQzSnvk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/FirstFragment.java">
+package com.example.hongkongpetownersapp;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.example.hongkongpetownersapp.databinding.FragmentFirstBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+public class FirstFragment extends Fragment {
+
+    private static final String TAG = "FirstFragment";
+    private FragmentFirstBinding binding;
+    private FirebaseAuth mAuth;
+
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState
+    ) {
+        binding = FragmentFirstBinding.inflate(inflater, container, false);
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+        return binding.getRoot();
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Check if user is already signed in
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // If already signed in, navigate to main screen
+            navigateToMainScreen();
+        }
+
+        // Set login button click listener
+        binding.buttonLogin.setOnClickListener(v -> {
+            String email = binding.editEmail.getText().toString().trim();
+            String password = binding.editPassword.getText().toString().trim();
+
+            if (validateInput(email, password)) {
+                loginUser(email, password);
+            }
+        });
+
+        // Set register button click listener
+        binding.buttonRegister.setOnClickListener(v -> {
+            String email = binding.editEmail.getText().toString().trim();
+            String password = binding.editPassword.getText().toString().trim();
+
+            if (validateInput(email, password)) {
+                registerUser(email, password);
+            }
+        });
+
+        // Set forgot password click listener
+        binding.textForgotPassword.setOnClickListener(v -> {
+            String email = binding.editEmail.getText().toString().trim();
+            if (TextUtils.isEmpty(email)) {
+                binding.layoutEmail.setError(getString(R.string.email_required_for_reset));
+                return;
+            }
+            resetPassword(email);
+        });
+    }
+
+    // Validate input fields
+    private boolean validateInput(String email, String password) {
+        boolean isValid = true;
+
+        // Clear previous errors
+        binding.layoutEmail.setError(null);
+        binding.layoutPassword.setError(null);
+
+        // Check if email is empty
+        if (TextUtils.isEmpty(email)) {
+            binding.layoutEmail.setError(getString(R.string.email_required));
+            isValid = false;
+        }
+        // Check email format
+        else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.layoutEmail.setError(getString(R.string.email_invalid));
+            isValid = false;
+        }
+
+        // Check if password is empty
+        if (TextUtils.isEmpty(password)) {
+            binding.layoutPassword.setError(getString(R.string.password_required));
+            isValid = false;
+        }
+        // Check password length ,Firebase requires at least 6 characters
+        else if (password.length() < 6) {
+            binding.layoutPassword.setError(getString(R.string.password_too_short));
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    // Sign in user
+    private void loginUser(String email, String password) {
+        // Show progress bar
+        showLoading(true);
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(requireActivity(), task -> {
+                    showLoading(false);
+
+                    if (task.isSuccessful()) {
+                        // Sign in success
+                        Log.d(TAG, "signInWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+
+                        // Check if email is verified
+                        if (user != null && !user.isEmailVerified()) {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.please_verify_email),
+                                    Toast.LENGTH_LONG).show();
+                            // Optionally, you can send verification email again
+                            user.sendEmailVerification();
+                        }
+
+                        Toast.makeText(getContext(),
+                                getString(R.string.login_success) + " " + user.getEmail(),
+                                Toast.LENGTH_SHORT).show();
+
+                        // Navigate to main screen
+                        navigateToMainScreen();
+                    } else {
+                        // Sign in failed
+                        Log.w(TAG, "signInWithEmail:failure", task.getException());
+                        String errorMessage = getString(R.string.login_failed) + " ";
+
+                        if (task.getException() != null) {
+                            String exceptionMessage = task.getException().getMessage();
+                            if (exceptionMessage != null) {
+                                if (exceptionMessage.contains("no user record")) {
+                                    errorMessage += getString(R.string.user_not_found);
+                                } else if (exceptionMessage.contains("password is invalid")) {
+                                    errorMessage += getString(R.string.wrong_password);
+                                } else if (exceptionMessage.contains("disabled")) {
+                                    errorMessage += getString(R.string.account_disabled);
+                                } else {
+                                    errorMessage += getString(R.string.check_credentials);
+                                }
+                            }
+                        }
+
+                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    // Register new user
+    private void registerUser(String email, String password) {
+        // Show progress bar
+        showLoading(true);
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(requireActivity(), task -> {
+                    showLoading(false);
+
+                    if (task.isSuccessful()) {
+                        // Registration success
+                        Log.d(TAG, "createUserWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+
+                        // Send verification email
+                        if (user != null) {
+                            user.sendEmailVerification()
+                                    .addOnCompleteListener(emailTask -> {
+                                        if (emailTask.isSuccessful()) {
+                                            Toast.makeText(getContext(),
+                                                    getString(R.string.verification_email_sent) + " " + user.getEmail(),
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                        }
+
+                        Toast.makeText(getContext(),
+                                getString(R.string.register_success) + " " + user.getEmail(),
+                                Toast.LENGTH_SHORT).show();
+
+                        // Navigate to main screen
+                        navigateToMainScreen();
+                    } else {
+                        // Registration failed
+                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        String errorMessage = getString(R.string.register_failed) + " ";
+
+                        if (task.getException() != null) {
+                            String exceptionMessage = task.getException().getMessage();
+                            if (exceptionMessage != null) {
+                                if (exceptionMessage.contains("email address is already in use")) {
+                                    errorMessage += getString(R.string.email_already_used);
+                                } else if (exceptionMessage.contains("email address is badly formatted")) {
+                                    errorMessage += getString(R.string.email_invalid);
+                                } else {
+                                    errorMessage += getString(R.string.try_again_later);
+                                }
+                            }
+                        }
+
+                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    // Reset password
+    private void resetPassword(String email) {
+        showLoading(true);
+
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(task -> {
+                    showLoading(false);
+
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Password reset email sent");
+                        Toast.makeText(getContext(),
+                                getString(R.string.password_reset_email_sent),
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Log.e(TAG, "Failed to send reset email", task.getException());
+                        Toast.makeText(getContext(),
+                                getString(R.string.password_reset_failed),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    // Show/hide loading progress
+    private void showLoading(boolean show) {
+        if (show) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.buttonLogin.setEnabled(false);
+            binding.buttonRegister.setEnabled(false);
+            binding.editEmail.setEnabled(false);
+            binding.editPassword.setEnabled(false);
+        } else {
+            binding.progressBar.setVisibility(View.GONE);
+            binding.buttonLogin.setEnabled(true);
+            binding.buttonRegister.setEnabled(true);
+            binding.editEmail.setEnabled(true);
+            binding.editPassword.setEnabled(true);
+        }
+    }
+
+    // Navigate to main screen
+    private void navigateToMainScreen() {
+        NavHostFragment.findNavController(FirstFragment.this)
+                .navigate(R.id.action_FirstFragment_to_SecondFragment);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/MyApplication.java">
+package com.example.hongkongpetownersapp;
+
+import android.app.Application;
+import com.google.firebase.FirebaseApp;
+
+public class MyApplication extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        FirebaseApp.initializeApp(this);
+    }
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/Pet.java">
+package com.example.hongkongpetownersapp;
+
+import com.google.firebase.Timestamp;
+
+public class Pet {
+    private String id;
+    private String name;
+    private String type;
+    private String ownerId;
+    private Timestamp createdAt;
+    private int age;
+    private String breed;
+    private String gender;
+    private String photoUrl;
+
+    public Pet() {}
+
+    // Basic constructor
+    public Pet(String name, String type, String ownerId) {
+        this.name = name;
+        this.type = type;
+        this.ownerId = ownerId;
+        this.createdAt = Timestamp.now();
+    }
+
+    // Getters and Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+
+    public String getOwnerId() { return ownerId; }
+    public void setOwnerId(String ownerId) { this.ownerId = ownerId; }
+
+    public Timestamp getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+
+    public int getAge() { return age; }
+    public void setAge(int age) { this.age = age; }
+
+    public String getBreed() { return breed; }
+    public void setBreed(String breed) { this.breed = breed; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+
+    public String getPhotoUrl() { return photoUrl; }
+    public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/PetAdapter.java">
+package com.example.hongkongpetownersapp;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+
+import java.util.List;
+
+public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
+
+    private List<Pet> pets;
+
+    public PetAdapter(List<Pet> pets) {
+        this.pets = pets;
+    }
+
+    @NonNull
+    @Override
+    public PetViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_pet, parent, false);
+        return new PetViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull PetViewHolder holder, int position) {
+        Pet pet = pets.get(position);
+        holder.bind(pet);
+    }
+
+    @Override
+    public int getItemCount() {
+        return pets.size();
+    }
+
+    static class PetViewHolder extends RecyclerView.ViewHolder {
+        private TextView textPetName;
+        private TextView textPetType;
+        private TextView textPetIcon;
+        private ImageView imagePetPhoto;
+
+        public PetViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textPetName = itemView.findViewById(R.id.text_pet_name);
+            textPetType = itemView.findViewById(R.id.text_pet_type);
+            textPetIcon = itemView.findViewById(R.id.text_pet_icon);
+            imagePetPhoto = itemView.findViewById(R.id.image_pet_photo);
+        }
+
+        public void bind(Pet pet) {
+            textPetName.setText(pet.getName());
+            textPetType.setText(pet.getType());
+
+            // display image if have
+            if (pet.getPhotoUrl() != null && !pet.getPhotoUrl().isEmpty()) {
+                imagePetPhoto.setVisibility(View.VISIBLE);
+                textPetIcon.setVisibility(View.GONE);
+                Glide.with(itemView.getContext())
+                        .load(pet.getPhotoUrl())
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .into(imagePetPhoto);
+            } else {
+                imagePetPhoto.setVisibility(View.GONE);
+                textPetIcon.setVisibility(View.VISIBLE);
+
+                // Set icon based on pet type
+                switch (pet.getType().toLowerCase()) {
+                    case "dog":
+                        textPetIcon.setText("🐕 Dog");
+                        break;
+                    case "cat":
+                        textPetIcon.setText("🐈 Cat");
+                        break;
+                    case "bird":
+                        textPetIcon.setText("🦜Bird");
+                        break;
+                    case "fish":
+                        textPetIcon.setText("🐠 Fish");
+                        break;
+                    case "rabbit":
+                        textPetIcon.setText("🐰 Rabbit");
+                        break;
+                    default:
+                        textPetIcon.setText("🐾Pat");
+                        break;
+                }
+            }
+
+            // Add click listener to navigate to pet detail
+            itemView.setOnClickListener(v -> {
+                Bundle bundle = new Bundle();
+                bundle.putString("petId", pet.getId());
+                Navigation.findNavController(v)
+                        .navigate(R.id.action_petListFragment_to_petDetailFragment, bundle);
+            });
+        }
+    }
+}
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/PetDetailFragment.java">
+package com.example.hongkongpetownersapp;
+
+import android.app.AlertDialog;
+import android.net.Uri;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.bumptech.glide.Glide;
+import com.example.hongkongpetownersapp.databinding.FragmentPetDetailBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
+public class PetDetailFragment extends Fragment {
+
+    private static final String TAG = "PetDetailFragment";
+    private FragmentPetDetailBinding binding;
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+    private FirebaseStorage storage;
+    private String petId;
+    private Pet currentPet;
+
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState
+    ) {
+        binding = FragmentPetDetailBinding.inflate(inflater, container, false);
+
+        // Initialize Firebase
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        storage = FirebaseStorage.getInstance();
+
+        // Get pet ID from arguments
+        if (getArguments() != null) {
+            petId = getArguments().getString("petId");
+        }
+
+        return binding.getRoot();
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Load pet data
+        if (petId != null) {
+            loadPetData();
+        }
+
+        // Set click listeners
+        binding.buttonSave.setOnClickListener(v -> savePetData());
+        binding.buttonDelete.setOnClickListener(v -> showDeleteConfirmation());
+
+        binding.buttonTakePhoto.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("petId", petId);
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_petDetailFragment_to_cameraFragment, bundle);
+        });
+
+        getParentFragmentManager().setFragmentResultListener("photoResult",
+                getViewLifecycleOwner(), (requestKey, result) -> {
+                    String photoPath = result.getString("photoPath");
+                    if (photoPath != null) {
+                        uploadPhoto(photoPath);
+                    }
+                });
+    }
+
+    private void loadPetData() {
+        db.collection("pets").document(petId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    currentPet = documentSnapshot.toObject(Pet.class);
+                    if (currentPet != null) {
+                        currentPet.setId(documentSnapshot.getId());
+                        displayPetData();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error loading pet", e);
+                    Toast.makeText(getContext(),
+                            "Error loading pet data",
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void displayPetData() {
+        // Display pet name
+        binding.editPetName.setText(currentPet.getName());
+
+        // Display pet photo if available
+        if (currentPet.getPhotoUrl() != null && !currentPet.getPhotoUrl().isEmpty()) {
+            binding.imagePetPhoto.setVisibility(View.VISIBLE);
+            Glide.with(this)
+                    .load(currentPet.getPhotoUrl())
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .into(binding.imagePetPhoto);
+        }
+
+        // Display pet type and icon
+        String petType = currentPet.getType();
+        if (petType != null) {
+            switch (petType.toLowerCase()) {
+                case "dog":
+                    binding.radioDog.setChecked(true);
+                    binding.textPetIcon.setText("🐕");
+                    break;
+                case "cat":
+                    binding.radioCat.setChecked(true);
+                    binding.textPetIcon.setText("🐈");
+                    break;
+                default:
+                    binding.radioOther.setChecked(true);
+                    binding.textPetIcon.setText("🐾");
+                    break;
+            }
+        }
+
+        // Display age if available
+        if (currentPet.getAge() > 0) {
+            binding.editPetAge.setText(String.valueOf(currentPet.getAge()));
+        }
+
+        // Display breed if available
+        if (currentPet.getBreed() != null) {
+            binding.editPetBreed.setText(currentPet.getBreed());
+        }
+
+        // Display gender if available
+        if (currentPet.getGender() != null) {
+            if (currentPet.getGender().equals("Male")) {
+                binding.radioMale.setChecked(true);
+            } else if (currentPet.getGender().equals("Female")) {
+                binding.radioFemale.setChecked(true);
+            }
+        }
+    }
+
+    // upload to Firebase
+    private void uploadPhoto(String photoPath) {
+        binding.uploadProgress.setVisibility(View.VISIBLE);
+        binding.buttonTakePhoto.setEnabled(false);
+
+        File photoFile = new File(photoPath);
+        Uri photoUri = Uri.fromFile(photoFile);
+
+        // save path
+        String fileName = "pet_photos/" + petId + "/" + System.currentTimeMillis() + ".jpg";
+        StorageReference photoRef = storage.getReference().child(fileName);
+
+        // upload image
+        photoRef.putFile(photoUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    photoRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                        String downloadUrl = downloadUri.toString();
+                        Log.d(TAG, "Photo uploaded successfully: " + downloadUrl);
+
+                        updatePhotoUrl(downloadUrl);
+
+                        // delete local cache image
+                        photoFile.delete();
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    binding.uploadProgress.setVisibility(View.GONE);
+                    binding.buttonTakePhoto.setEnabled(true);
+                    Log.e(TAG, "Photo upload failed", e);
+                    Toast.makeText(getContext(),
+                            "Failed to upload photo",
+                            Toast.LENGTH_SHORT).show();
+                })
+                .addOnProgressListener(snapshot -> {
+                    double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+                    Log.d(TAG, "Upload progress: " + progress + "%");
+                });
+    }
+
+    private void updatePhotoUrl(String photoUrl) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("photoUrl", photoUrl);
+
+        db.collection("pets").document(petId)
+                .update(updates)
+                .addOnSuccessListener(aVoid -> {
+                    binding.uploadProgress.setVisibility(View.GONE);
+                    binding.buttonTakePhoto.setEnabled(true);
+
+                    currentPet.setPhotoUrl(photoUrl);
+
+                    // display new image
+                    binding.imagePetPhoto.setVisibility(View.VISIBLE);
+                    Glide.with(this)
+                            .load(photoUrl)
+                            .placeholder(R.drawable.ic_launcher_background)
+                            .into(binding.imagePetPhoto);
+
+                    Toast.makeText(getContext(),
+                            "Photo updated successfully",
+                            Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    binding.uploadProgress.setVisibility(View.GONE);
+                    binding.buttonTakePhoto.setEnabled(true);
+                    Log.e(TAG, "Error updating photo URL", e);
+                    Toast.makeText(getContext(),
+                            "Failed to update photo",
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void savePetData() {
+        // Get input values
+        String petName = binding.editPetName.getText().toString().trim();
+        String ageText = binding.editPetAge.getText().toString().trim();
+        String breed = binding.editPetBreed.getText().toString().trim();
+
+        // Validate name
+        if (TextUtils.isEmpty(petName)) {
+            binding.layoutPetName.setError(getString(R.string.pet_name_required));
+            return;
+        }
+
+        // Get selected pet type
+        String petType = getSelectedPetType();
+
+        // Get selected gender
+        String gender = getSelectedGender();
+
+        // Prepare update data
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("name", petName);
+        updates.put("type", petType);
+
+        // Add age if provided
+        if (!TextUtils.isEmpty(ageText)) {
+            try {
+                int age = Integer.parseInt(ageText);
+                updates.put("age", age);
+            } catch (NumberFormatException e) {
+                binding.layoutPetAge.setError("Please enter a valid age");
+                return;
+            }
+        }
+
+        // Add breed if provided
+        if (!TextUtils.isEmpty(breed)) {
+            updates.put("breed", breed);
+        }
+
+        // Add gender if selected
+        if (!TextUtils.isEmpty(gender)) {
+            updates.put("gender", gender);
+        }
+
+        // Update in Firestore
+        db.collection("pets").document(petId)
+                .update(updates)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getContext(),
+                            getString(R.string.pet_updated_success),
+                            Toast.LENGTH_SHORT).show();
+                    // Navigate back
+                    NavHostFragment.findNavController(this).navigateUp();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error updating pet", e);
+                    Toast.makeText(getContext(),
+                            "Error updating pet data",
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private String getSelectedPetType() {
+        int selectedId = binding.radioGroupPetType.getCheckedRadioButtonId();
+
+        if (selectedId == R.id.radio_dog) return "Dog";
+        else if (selectedId == R.id.radio_cat) return "Cat";
+        else return "Other";
+    }
+
+    private String getSelectedGender() {
+        int selectedId = binding.radioGroupGender.getCheckedRadioButtonId();
+
+        if (selectedId == R.id.radio_male) return "Male";
+        else if (selectedId == R.id.radio_female) return "Female";
+        else return "";
+    }
+
+    private void showDeleteConfirmation() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.delete_pet))
+                .setMessage(getString(R.string.delete_pet_confirmation))
+                .setPositiveButton(getString(R.string.delete), (dialog, which) -> deletePet())
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
+    }
+
+    private void deletePet() {
+        db.collection("pets").document(petId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getContext(),
+                            getString(R.string.pet_deleted_success),
+                            Toast.LENGTH_SHORT).show();
+                    // Navigate back to pet list
+                    NavHostFragment.findNavController(this).navigateUp();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error deleting pet", e);
+                    Toast.makeText(getContext(),
+                            "Error deleting pet",
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}
+</file>
+
+<file path="app/src/main/res/layout/fragment_first.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".FirstFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/text_app_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_title"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="40dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_subtitle"
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/text_app_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:hint="@string/email_hint"
+            app:layout_constraintTop_toBottomOf="@id/text_subtitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/password_hint"
+            app:passwordToggleEnabled="true"
+            app:layout_constraintTop_toBottomOf="@id/layout_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/button_login"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/login_button"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/layout_password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/button_register"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/register_button"
+            android:textSize="16sp"
+            style="?attr/materialButtonOutlinedStyle"
+            app:layout_constraintTop_toBottomOf="@id/button_login"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_forgot_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/forgot_password"
+            android:textColor="@color/design_default_color_primary"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/button_register"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/text_forgot_password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
+</file>
+
+<file path="app/src/main/res/layout/fragment_pet_detail.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".PetDetailFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pet_details"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Pet Photo Card - NEW -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="80dp"
+            app:cardElevation="4dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- Pet Icon (if no image) -->
+                <TextView
+                    android:id="@+id/text_pet_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="🐕"
+                    android:textSize="80sp"
+                    android:gravity="center"
+                    android:background="#F0F0F0" />
+
+                <!-- Pet Photo (if have image) -->
+                <ImageView
+                    android:id="@+id/image_pet_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Take Photo Button -->
+        <Button
+            android:id="@+id/button_take_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/take_photo"
+            android:layout_marginBottom="24dp"
+            app:icon="@android:drawable/ic_menu_camera" />
+
+        <!-- Pet Name -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_pet_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/pet_name"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_pet_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Pet Type -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pet_type"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/radio_group_pet_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <RadioButton
+                android:id="@+id/radio_dog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dog"
+                android:padding="8dp" />
+
+            <RadioButton
+                android:id="@+id/radio_cat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cat"
+                android:padding="8dp" />
+
+            <RadioButton
+                android:id="@+id/radio_other"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Other"
+                android:padding="8dp" />
+
+        </RadioGroup>
+
+        <!-- Pet Age -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_pet_age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/pet_age"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_pet_age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Pet Breed -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_pet_breed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/pet_breed"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_pet_breed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Pet Gender -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pet_gender"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/radio_group_gender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp">
+
+            <RadioButton
+                android:id="@+id/radio_male"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/male"
+                android:layout_marginEnd="24dp" />
+
+            <RadioButton
+                android:id="@+id/radio_female"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/female" />
+
+        </RadioGroup>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/button_save"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/save_changes"
+            android:textSize="16sp" />
+
+        <!-- Delete Button -->
+        <Button
+            android:id="@+id/button_delete"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/delete_pet"
+            android:textSize="16sp"
+            android:textColor="@color/design_default_color_error"
+            style="?attr/materialButtonOutlinedStyle" />
+
+        <!-- Upload Progress -->
+        <ProgressBar
+            android:id="@+id/upload_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</ScrollView>
+</file>
+
+<file path="app/src/main/res/layout/fragment_pet_list.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".PetListFragment">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/my_pets"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Empty State -->
+    <LinearLayout
+        android:id="@+id/empty_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_pets_yet"
+            android:textSize="18sp"
+            android:textColor="#666666" />
+
+        <Button
+            android:id="@+id/button_add_first_pet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/add_your_first_pet" />
+
+    </LinearLayout>
+
+    <!-- Pet List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_pets"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/text_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Loading Progress -->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Add Pet FAB -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_pet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</file>
+
+<file path="build.gradle">
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.gms:google-services:4.4.0'
+    }
+}
+
+plugins {
+    alias(libs.plugins.android.application) apply false
+}
+</file>
+
+<file path="gradle/libs.versions.toml">
+[versions]
+agp = "8.8.0"
+junit = "4.13.2"
+junitVersion = "1.1.5"
+espressoCore = "3.5.1"
+appcompat = "1.6.1"
+material = "1.10.0"
+constraintlayout = "2.1.4"
+navigationFragment = "2.6.0"
+navigationUi = "2.6.0"
+firebaseAuth = "23.2.1"
+credentials = "1.5.0"
+credentialsPlayServicesAuth = "1.5.0"
+googleid = "1.1.1"
+
+[libraries]
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
+navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/MainActivity.java">
+package com.example.hongkongpetownersapp;
+
+import android.os.Bundle;
+import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
+import com.example.hongkongpetownersapp.databinding.ActivityMainBinding;
+
+public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
+    private AppBarConfiguration appBarConfiguration;
+    private ActivityMainBinding binding;
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+    private NavController navController;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.toolbar);
+
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+
+        // Initialize Firebase
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
+        // Listen to navigation changes
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.FirstFragment) {
+                // Hide FloatingActionButton on login screen
+                binding.fab.hide();
+            } else {
+                // Show FloatingActionButton on other screens
+                binding.fab.show();
+            }
+        });
+
+        binding.fab.setOnClickListener(view -> {
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser != null) {
+                Snackbar.make(view, "Quick action button", Snackbar.LENGTH_LONG)
+                        .setAnchorView(R.id.fab)
+                        .show();
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
+                || super.onSupportNavigateUp();
+    }
+}
+</file>
+
+<file path="app/build.gradle">
+plugins {
+    alias(libs.plugins.android.application)
+    id 'com.google.gms.google-services'
+}
+
+android {
+    namespace 'com.example.hongkongpetownersapp'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.example.hongkongpetownersapp"
+        minSdk 31
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.constraintlayout
+    implementation libs.navigation.fragment
+    implementation libs.navigation.ui
+
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-storage'
+    implementation libs.credentials
+    implementation libs.credentials.play.services.auth
+    implementation libs.googleid
+    implementation 'androidx.camera:camera-core:1.2.3'
+    implementation 'androidx.camera:camera-camera2:1.2.3'
+    implementation 'androidx.camera:camera-lifecycle:1.2.3'
+    implementation 'androidx.camera:camera-view:1.2.3'
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
+
+    // just test
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}
+</file>
+
+<file path="app/src/main/AndroidManifest.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.any" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.HongKongPetOwnersApp"
+        tools:targetApi="31">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.HongKongPetOwnersApp">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
+</file>
+
+<file path="app/src/main/java/com/example/hongkongpetownersapp/SecondFragment.java">
+package com.example.hongkongpetownersapp;
+
+import android.app.AlertDialog;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.example.hongkongpetownersapp.databinding.FragmentSecondBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+public class SecondFragment extends Fragment {
+
+    private FragmentSecondBinding binding;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState
+    ) {
+        binding = FragmentSecondBinding.inflate(inflater, container, false);
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+        return binding.getRoot();
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Check if user is signed in
+        currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            // If not signed in, navigate back to login
+            navigateToLogin();
+            return;
+        }
+
+        // Display user info
+        displayUserInfo();
+
+        // Set logout button click listener
+        binding.buttonLogout.setOnClickListener(v -> showLogoutConfirmation());
+
+        // Set account settings button click listener
+        binding.buttonAccountSettings.setOnClickListener(v -> showAccountSettings());
+
+        // Set verify email button click listener
+        binding.buttonVerifyEmail.setOnClickListener(v -> sendVerificationEmail());
+
+        // Set add my pet button click listener
+        binding.buttonAddMyPet.setOnClickListener(v -> {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_SecondFragment_to_addPetFragment);
+        });
+
+        // Set my pets button click listener
+        binding.buttonMyPets.setOnClickListener(v -> {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_SecondFragment_to_petListFragment);
+        });
+
+        // Set feature button click listeners
+        setupFeatureButtons();
+    }
+
+    private void displayUserInfo() {
+        if (currentUser != null) {
+            // Display email
+            binding.textUserEmail.setText(currentUser.getEmail());
+
+            // Check email verification status
+            if (!currentUser.isEmailVerified()) {
+                binding.textVerificationStatus.setVisibility(View.VISIBLE);
+                binding.buttonVerifyEmail.setVisibility(View.VISIBLE);
+            } else {
+                binding.textVerificationStatus.setVisibility(View.GONE);
+                binding.buttonVerifyEmail.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void setupFeatureButtons() {
+        binding.buttonPetParks.setOnClickListener(v -> {
+            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+        });
+
+        binding.buttonPetAlbum.setOnClickListener(v -> {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_SecondFragment_to_petListFragment);
+        });
+
+        binding.buttonVaccineRecords.setOnClickListener(v -> {
+            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+        });
+
+        binding.buttonHealthReminders.setOnClickListener(v -> {
+            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void showAccountSettings() {
+        String[] options = {
+                getString(R.string.change_password),
+                getString(R.string.change_email),
+                getString(R.string.delete_account)
+        };
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.account_settings))
+                .setItems(options, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            changePassword();
+                            break;
+                        case 1:
+                            changeEmail();
+                            break;
+                        case 2:
+                            deleteAccount();
+                            break;
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
+    }
+
+    private void changePassword() {
+        if (currentUser != null && currentUser.getEmail() != null) {
+            mAuth.sendPasswordResetEmail(currentUser.getEmail())
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.password_reset_email_sent),
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.password_reset_failed),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+        }
+    }
+
+    private void changeEmail() {
+        Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+        // Implementation for email change would require re-authentication
+    }
+
+    private void deleteAccount() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.delete_account))
+                .setMessage(getString(R.string.delete_account_confirmation))
+                .setPositiveButton(getString(R.string.delete), (dialog, which) -> {
+                    if (currentUser != null) {
+                        currentUser.delete()
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getContext(),
+                                                getString(R.string.account_deleted),
+                                                Toast.LENGTH_SHORT).show();
+                                        navigateToLogin();
+                                    } else {
+                                        Toast.makeText(getContext(),
+                                                getString(R.string.delete_account_failed),
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
+    }
+
+    private void sendVerificationEmail() {
+        if (currentUser != null) {
+            currentUser.sendEmailVerification()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.verification_email_sent) + " " + currentUser.getEmail(),
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getContext(),
+                                    getString(R.string.verification_email_failed),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+        }
+    }
+
+    private void showLogoutConfirmation() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.logout_button))
+                .setMessage(getString(R.string.logout_confirmation))
+                .setPositiveButton(getString(R.string.logout_button), (dialog, which) -> {
+                    mAuth.signOut();
+                    Toast.makeText(getContext(), getString(R.string.logout_success), Toast.LENGTH_SHORT).show();
+                    navigateToLogin();
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
+    }
+
+    // Navigate to login screen
+    private void navigateToLogin() {
+        NavHostFragment.findNavController(SecondFragment.this)
+                .navigate(R.id.action_SecondFragment_to_FirstFragment);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}
+</file>
+
+<file path="app/src/main/res/layout/fragment_second.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".SecondFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/text_welcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome_message"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="40dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_user_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="user@example.com"
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/text_welcome"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/text_verification_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/email_not_verified"
+            android:textSize="14sp"
+            android:textColor="@color/design_default_color_error"
+            android:layout_marginTop="4dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/text_user_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/button_verify_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verify_email_button"
+            android:textSize="14sp"
+            android:visibility="gone"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/text_verification_status"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Two Pet Buttons Side by Side -->
+        <LinearLayout
+            android:id="@+id/layout_pet_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/button_verify_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Add My Pet Button -->
+            <Button
+                android:id="@+id/button_add_my_pet"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="@string/add_pet_short"
+                android:textSize="16sp"
+                app:icon="@android:drawable/ic_input_add"
+                app:iconGravity="textStart"
+                app:cornerRadius="12dp" />
+
+            <!-- My Pets Button -->
+            <Button
+                android:id="@+id/button_my_pets"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="@string/my_pets"
+                android:textSize="16sp"
+                app:icon="@android:drawable/ic_menu_agenda"
+                app:iconGravity="textStart"
+                style="?attr/materialButtonOutlinedStyle"
+                app:cornerRadius="12dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_features_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_features"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toBottomOf="@id/layout_pet_buttons"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/layout_features"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/text_features_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:id="@+id/button_pet_parks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="@string/pet_parks"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?attr/selectableItemBackground" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:id="@+id/button_pet_album"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="@string/pet_album"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?attr/selectableItemBackground" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:id="@+id/button_vaccine_records"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="@string/vaccine_records"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?attr/selectableItemBackground" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:id="@+id/button_health_reminders"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="@string/health_reminders"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?attr/selectableItemBackground" />
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/button_account_settings"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/account_settings"
+            android:textSize="16sp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/layout_features"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/button_logout"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/logout_button"
+            android:textSize="16sp"
+            style="?attr/materialButtonOutlinedStyle"
+            app:layout_constraintTop_toBottomOf="@id/button_account_settings"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
+</file>
+
+<file path="app/src/main/res/navigation/nav_graph.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/FirstFragment">
+
+    <fragment
+        android:id="@+id/FirstFragment"
+        android:name="com.example.hongkongpetownersapp.FirstFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_first">
+
+        <action
+            android:id="@+id/action_FirstFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SecondFragment"
+        android:name="com.example.hongkongpetownersapp.SecondFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_second">
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+
+        <action
+            android:id="@+id/action_SecondFragment_to_petListFragment"
+            app:destination="@id/petListFragment" />
+
+        <action
+            android:id="@+id/action_SecondFragment_to_addPetFragment"
+            app:destination="@id/addPetFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/petListFragment"
+        android:name="com.example.hongkongpetownersapp.PetListFragment"
+        android:label="@string/my_pets"
+        tools:layout="@layout/fragment_pet_list">
+
+        <action
+            android:id="@+id/action_petListFragment_to_addPetFragment"
+            app:destination="@id/addPetFragment" />
+
+        <action
+            android:id="@+id/action_petListFragment_to_petDetailFragment"
+            app:destination="@id/petDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addPetFragment"
+        android:name="com.example.hongkongpetownersapp.AddPetFragment"
+        android:label="@string/add_new_pet"
+        tools:layout="@layout/fragment_add_pet" />
+
+    <fragment
+        android:id="@+id/petDetailFragment"
+        android:name="com.example.hongkongpetownersapp.PetDetailFragment"
+        android:label="@string/pet_details"
+        tools:layout="@layout/fragment_pet_detail">
+
+        <action
+            android:id="@+id/action_petDetailFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.example.hongkongpetownersapp.CameraFragment"
+        android:label="@string/take_photo"
+        tools:layout="@layout/fragment_camera" />
+
+</navigation>
+</file>
+
+<file path="app/src/main/res/values/strings.xml">
+<resources>
+    <!-- App Info -->
+    <string name="app_name">HK Pet Owners App</string>
+    <string name="app_title">HK Pet Owners</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Fragment Labels -->
+    <string name="first_fragment_label">Login</string>
+    <string name="second_fragment_label">Home</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <!-- Login Screen -->
+    <string name="login_subtitle">Please sign in to your account</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button">Sign In</string>
+    <string name="register_button">Create Account</string>
+    <string name="forgot_password">Forgot Password?</string>
+
+    <!-- Validation Messages -->
+    <string name="email_required">Email is required</string>
+    <string name="email_required_for_reset">Please enter your email to reset password</string>
+    <string name="email_invalid">Please enter a valid email</string>
+    <string name="password_required">Password is required</string>
+    <string name="password_too_short">Password must be at least 6 characters</string>
+
+    <!-- Login Messages -->
+    <string name="login_success">Welcome back!</string>
+    <string name="login_failed">Login failed:</string>
+    <string name="user_not_found">Account not found</string>
+    <string name="wrong_password">Incorrect password</string>
+    <string name="account_disabled">Account has been disabled</string>
+    <string name="check_credentials">Please check your credentials</string>
+
+    <!-- Registration Messages -->
+    <string name="register_success">Registration successful! Welcome</string>
+    <string name="register_failed">Registration failed:</string>
+    <string name="email_already_used">This email is already registered</string>
+    <string name="try_again_later">Please try again later</string>
+
+    <!-- Email Verification -->
+    <string name="please_verify_email">Please verify your email address</string>
+    <string name="verification_email_sent">Verification email sent to</string>
+    <string name="verification_email_failed">Failed to send verification email</string>
+    <string name="email_not_verified">Email not verified</string>
+    <string name="verify_email_button">Send Verification Email</string>
+
+    <!-- Password Reset -->
+    <string name="password_reset_email_sent">Password reset email sent! Check your inbox</string>
+    <string name="password_reset_failed">Failed to send password reset email</string>
+
+    <!-- Main Screen -->
+    <string name="welcome_message">Welcome to HK Pet Owners App</string>
+    <string name="main_features">Features</string>
+    <string name="add_my_pet">Add My Pet</string>
+    <string name="pet_parks">Find Pet Parks</string>
+    <string name="pet_album">Pet Album</string>
+    <string name="vaccine_records">Vaccine Records</string>
+    <string name="health_reminders">Health Reminders</string>
+    <string name="feature_coming_soon">This feature is coming soon!</string>
+    <string name="add_pet_short">Add Pet</string>
+
+    <!-- Pet Management -->
+    <string name="my_pets">My Pets</string>
+    <string name="no_pets_yet">No pets yet</string>
+    <string name="add_your_first_pet">Add Your First Pet</string>
+    <string name="add_new_pet">Add New Pet</string>
+    <string name="pet_name_hint">Pet Name</string>
+    <string name="pet_type">Pet Type</string>
+    <string name="save_pet">Save Pet</string>
+    <string name="pet_name_required">Pet name is required</string>
+    <string name="pet_added_success">Pet added successfully!</string>
+    <string name="error_adding_pet">Error adding pet. Please try again.</string>
+    <string name="error_loading_pets">Error loading pets</string>
+
+    <!-- Pet Details -->
+    <string name="pet_details">Pet Details</string>
+    <string name="pet_name">Pet Name</string>
+    <string name="pet_age">Age (years)</string>
+    <string name="pet_breed">Breed</string>
+    <string name="pet_gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="delete_pet">Delete Pet</string>
+    <string name="delete_pet_confirmation">Are you sure you want to delete this pet?</string>
+    <string name="pet_updated_success">Pet information updated successfully!</string>
+    <string name="pet_deleted_success">Pet deleted successfully</string>
+    <string name="take_photo">Take Photo</string>
+
+    <!-- Account Management -->
+    <string name="account_settings">Account Settings</string>
+    <string name="change_password">Change Password</string>
+    <string name="change_email">Change Email</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="delete_account_confirmation">Are you sure you want to delete your account? This action cannot be undone.</string>
+    <string name="account_deleted">Account deleted successfully</string>
+    <string name="delete_account_failed">Failed to delete account. Please re-login and try again.</string>
+
+    <!-- Logout -->
+    <string name="logout_button">Sign Out</string>
+    <string name="logout_confirmation">Are you sure you want to sign out?</string>
+    <string name="logout_success">Successfully signed out</string>
+
+    <!-- General -->
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="confirm">Confirm</string>
+</resources>
+</file>
+
+</files>

@@ -1,6 +1,7 @@
 package com.example.hongkongpetownersapp;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,10 +14,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.bumptech.glide.Glide;
 import com.example.hongkongpetownersapp.databinding.FragmentPetDetailBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,10 +72,34 @@ public class PetDetailFragment extends Fragment {
 
         getParentFragmentManager().setFragmentResultListener("photoResult",
                 getViewLifecycleOwner(), (requestKey, result) -> {
-                    String photoUri = result.getString("photoUri");
                     String photoPath = result.getString("photoPath");
-                    Log.d(TAG, "Received photo: " + photoUri);
+                    if (photoPath != null) {
+                        saveLocalPhotoPath(photoPath);
+                    }
                 });
+    }
+
+    private void saveLocalPhotoPath(String photoPath) {
+        File photoFile = new File(photoPath);
+        if (photoFile.exists()) {
+            binding.imagePetPhoto.setVisibility(View.VISIBLE);
+            binding.textPetIcon.setVisibility(View.GONE);
+
+            Glide.with(this)
+                    .load(photoFile)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .centerCrop()
+                    .into(binding.imagePetPhoto);
+
+            getActivity().getSharedPreferences("pet_photos", Context.MODE_PRIVATE)
+                    .edit()
+                    .putString("pet_" + petId + "_photo", photoPath)
+                    .apply();
+
+            Toast.makeText(getContext(),
+                    "Photo saved locally!",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadPetData() {
@@ -96,6 +123,23 @@ public class PetDetailFragment extends Fragment {
     private void displayPetData() {
         // Display pet name
         binding.editPetName.setText(currentPet.getName());
+
+        String localPhotoPath = getActivity()
+                .getSharedPreferences("pet_photos", Context.MODE_PRIVATE)
+                .getString("pet_" + petId + "_photo", null);
+
+        if (localPhotoPath != null) {
+            File photoFile = new File(localPhotoPath);
+            if (photoFile.exists()) {
+                binding.imagePetPhoto.setVisibility(View.VISIBLE);
+                binding.textPetIcon.setVisibility(View.GONE);
+                Glide.with(this)
+                        .load(photoFile)
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .centerCrop()
+                        .into(binding.imagePetPhoto);
+            }
+        }
 
         // Display pet type and icon
         String petType = currentPet.getType();

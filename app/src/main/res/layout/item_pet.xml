@@ -14,14 +14,38 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
-        <!-- Pet Icon -->
-        <TextView
-            android:id="@+id/text_pet_icon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:text="🐕"
-            android:textSize="32sp"
-            android:gravity="center" />
+        <!-- Pet Photo/Icon Container -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="0dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- Pet Icon (default) -->
+                <TextView
+                    android:id="@+id/text_pet_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="🐕"
+                    android:textSize="32sp"
+                    android:gravity="center"
+                    android:background="#F0F0F0" />
+
+                <!-- Pet Photo -->
+                <ImageView
+                    android:id="@+id/image_pet_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+        </androidx.cardview.widget.CardView>
 
         <!-- Pet Info -->
         <LinearLayout
