@@ -51,6 +51,7 @@ public class PetDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Load pet data
         if (petId != null) {
             loadPetData();
         }
@@ -58,6 +59,20 @@ public class PetDetailFragment extends Fragment {
         // Set click listeners
         binding.buttonSave.setOnClickListener(v -> savePetData());
         binding.buttonDelete.setOnClickListener(v -> showDeleteConfirmation());
+
+        binding.buttonTakePhoto.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("petId", petId);
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_petDetailFragment_to_cameraFragment, bundle);
+        });
+
+        getParentFragmentManager().setFragmentResultListener("photoResult",
+                getViewLifecycleOwner(), (requestKey, result) -> {
+                    String photoUri = result.getString("photoUri");
+                    String photoPath = result.getString("photoPath");
+                    Log.d(TAG, "Received photo: " + photoUri);
+                });
     }
 
     private void loadPetData() {
@@ -88,15 +103,15 @@ public class PetDetailFragment extends Fragment {
             switch (petType.toLowerCase()) {
                 case "dog":
                     binding.radioDog.setChecked(true);
-                    binding.textPetIcon.setText("🐕 Dog");
+                    binding.textPetIcon.setText("🐕");
                     break;
                 case "cat":
                     binding.radioCat.setChecked(true);
-                    binding.textPetIcon.setText("🐈 Cat");
+                    binding.textPetIcon.setText("🐈");
                     break;
                 default:
                     binding.radioOther.setChecked(true);
-                    binding.textPetIcon.setText("🐾 Pet");
+                    binding.textPetIcon.setText("🐾");
                     break;
             }
         }
@@ -165,7 +180,7 @@ public class PetDetailFragment extends Fragment {
             updates.put("gender", gender);
         }
 
-        // Update in Firestore..
+        // Update in Firestore
         db.collection("pets").document(petId)
                 .update(updates)
                 .addOnSuccessListener(aVoid -> {

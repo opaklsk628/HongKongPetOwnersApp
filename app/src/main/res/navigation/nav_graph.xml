@@ -60,6 +60,17 @@
         android:id="@+id/petDetailFragment"
         android:name="com.example.hongkongpetownersapp.PetDetailFragment"
         android:label="@string/pet_details"
-        tools:layout="@layout/fragment_pet_detail" />
+        tools:layout="@layout/fragment_pet_detail">
+
+        <action
+            android:id="@+id/action_petDetailFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.example.hongkongpetownersapp.CameraFragment"
+        android:label="@string/take_photo"
+        tools:layout="@layout/fragment_camera" />
 
 </navigation>

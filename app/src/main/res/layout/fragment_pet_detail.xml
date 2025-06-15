@@ -34,6 +34,15 @@
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
+        <Button
+            android:id="@+id/button_take_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/take_photo"
+            android:layout_marginBottom="24dp"
+            app:icon="@android:drawable/ic_menu_camera" />
+
         <!-- Pet Name -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layout_pet_name"
