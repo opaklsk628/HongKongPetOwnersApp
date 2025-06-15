@@ -45,6 +45,7 @@ public class SecondFragment extends Fragment {
             return;
         }
 
+        // Display user info
         displayUserInfo();
 
         // Set logout button click listener
@@ -60,6 +61,12 @@ public class SecondFragment extends Fragment {
         binding.buttonAddMyPet.setOnClickListener(v -> {
             NavHostFragment.findNavController(this)
                     .navigate(R.id.action_SecondFragment_to_addPetFragment);
+        });
+
+        // Set my pets button click listener
+        binding.buttonMyPets.setOnClickListener(v -> {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_SecondFragment_to_petListFragment);
         });
 
         // Set feature button click listeners

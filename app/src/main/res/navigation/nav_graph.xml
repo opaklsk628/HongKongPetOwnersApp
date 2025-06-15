@@ -30,7 +30,6 @@
             android:id="@+id/action_SecondFragment_to_petListFragment"
             app:destination="@id/petListFragment" />
 
-        <!-- NEW: Direct navigation to Add Pet -->
         <action
             android:id="@+id/action_SecondFragment_to_addPetFragment"
             app:destination="@id/addPetFragment" />
@@ -45,6 +44,10 @@
         <action
             android:id="@+id/action_petListFragment_to_addPetFragment"
             app:destination="@id/addPetFragment" />
+
+        <action
+            android:id="@+id/action_petListFragment_to_petDetailFragment"
+            app:destination="@id/petDetailFragment" />
     </fragment>
 
     <fragment
@@ -52,4 +55,11 @@
         android:name="com.example.hongkongpetownersapp.AddPetFragment"
         android:label="@string/add_new_pet"
         tools:layout="@layout/fragment_add_pet" />
+
+    <fragment
+        android:id="@+id/petDetailFragment"
+        android:name="com.example.hongkongpetownersapp.PetDetailFragment"
+        android:label="@string/pet_details"
+        tools:layout="@layout/fragment_pet_detail" />
+
 </navigation>

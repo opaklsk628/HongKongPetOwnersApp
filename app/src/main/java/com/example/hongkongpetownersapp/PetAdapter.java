@@ -1,11 +1,13 @@
 package com.example.hongkongpetownersapp;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -74,6 +76,14 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
                     textPetIcon.setText("🐾 Pet");
                     break;
             }
+
+            // Add click listener to navigate to pet detail
+            itemView.setOnClickListener(v -> {
+                Bundle bundle = new Bundle();
+                bundle.putString("petId", pet.getId());
+                Navigation.findNavController(v)
+                        .navigate(R.id.action_petListFragment_to_petDetailFragment, bundle);
+            });
         }
     }
 }

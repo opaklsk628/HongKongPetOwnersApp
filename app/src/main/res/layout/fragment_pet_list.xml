@@ -7,6 +7,7 @@
     android:background="@color/white"
     tools:context=".PetListFragment">
 
+    <!-- Title -->
     <TextView
         android:id="@+id/text_title"
         android:layout_width="wrap_content"
@@ -19,6 +20,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- Empty State -->
     <LinearLayout
         android:id="@+id/empty_state"
         android:layout_width="wrap_content"
@@ -70,7 +72,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Add Pet function in FAB -->
+    <!-- Add Pet FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_pet"
         android:layout_width="wrap_content"

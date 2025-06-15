@@ -8,9 +8,14 @@ public class Pet {
     private String type;
     private String ownerId;
     private Timestamp createdAt;
+    private int age;
+    private String breed;
+    private String gender;
 
+    // Empty constructor for Firestore
     public Pet() {}
 
+    // Basic constructor
     public Pet(String name, String type, String ownerId) {
         this.name = name;
         this.type = type;
@@ -18,6 +23,7 @@ public class Pet {
         this.createdAt = Timestamp.now();
     }
 
+    // Getters and Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -32,4 +38,14 @@ public class Pet {
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+
+    // getters and setters
+    public int getAge() { return age; }
+    public void setAge(int age) { this.age = age; }
+
+    public String getBreed() { return breed; }
+    public void setBreed(String breed) { this.breed = breed; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
 }
