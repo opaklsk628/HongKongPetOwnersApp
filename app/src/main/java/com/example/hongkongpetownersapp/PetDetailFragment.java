@@ -63,6 +63,7 @@ public class PetDetailFragment extends Fragment {
             loadPetData();
         }
 
+        // Set click listeners
         binding.buttonSave.setOnClickListener(v -> savePetData());
         binding.buttonDelete.setOnClickListener(v -> showDeleteConfirmation());
 
@@ -84,7 +85,7 @@ public class PetDetailFragment extends Fragment {
 
     // upload image to Firebase Storage
     private void uploadPhotoToFirebase(String photoPath) {
-        // display upload status
+        // upload status
         binding.uploadProgress.setVisibility(View.VISIBLE);
         binding.buttonTakePhoto.setEnabled(false);
 
@@ -106,7 +107,6 @@ public class PetDetailFragment extends Fragment {
                                 Log.d(TAG, "Got download URL: " + downloadUri);
                                 updatePetPhotoUrl(downloadUri.toString());
 
-                                // del local  phone file
                                 photoFile.delete();
                             })
                             .addOnFailureListener(e -> {
@@ -127,7 +127,7 @@ public class PetDetailFragment extends Fragment {
                             Toast.LENGTH_LONG).show();
                 })
                 .addOnProgressListener(snapshot -> {
-                    // cal the upload time
+                    // cal upload time
                     double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
                     Log.d(TAG, "Upload progress: " + Math.round(progress) + "%");
                 });
@@ -142,18 +142,34 @@ public class PetDetailFragment extends Fragment {
         db.collection("pets").document(petId)
                 .update(updates)
                 .addOnSuccessListener(aVoid -> {
-                    binding.uploadProgress.setVisibility(View.GONE);
-                    binding.buttonTakePhoto.setEnabled(true);
-
                     if (currentPet != null) {
                         currentPet.setPhotoUrl(photoUrl);
                         displayPetPhoto();
                     }
 
-                    Log.d(TAG, "Pet photo URL updated successfully");
-                    Toast.makeText(getContext(),
-                            "Photo uploaded successfully!",
-                            Toast.LENGTH_SHORT).show();
+                    // create photos record
+                    Photo photo = new Photo(photoUrl, petId);
+                    db.collection("pets").document(petId)
+                            .collection("photos")
+                            .add(photo)
+                            .addOnSuccessListener(documentReference -> {
+                                binding.uploadProgress.setVisibility(View.GONE);
+                                binding.buttonTakePhoto.setEnabled(true);
+
+                                Log.d(TAG, "Photo record created successfully");
+                                Toast.makeText(getContext(),
+                                        "Photo uploaded successfully!",
+                                        Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                binding.uploadProgress.setVisibility(View.GONE);
+                                binding.buttonTakePhoto.setEnabled(true);
+
+                                Log.e(TAG, "Failed to create photo record", e);
+                                Toast.makeText(getContext(),
+                                        "Photo uploaded but failed to save record",
+                                        Toast.LENGTH_LONG).show();
+                            });
                 })
                 .addOnFailureListener(e -> {
                     binding.uploadProgress.setVisibility(View.GONE);
@@ -185,14 +201,12 @@ public class PetDetailFragment extends Fragment {
                 });
     }
 
+    // display pet photo
     private void displayPetPhoto() {
         if (currentPet != null && currentPet.getPhotoUrl() != null && !currentPet.getPhotoUrl().isEmpty()) {
-            // hide emoji icon
             binding.textPetIcon.setVisibility(View.GONE);
-            // display image
             binding.imagePetPhoto.setVisibility(View.VISIBLE);
 
-            // user Glide load image
             Glide.with(this)
                     .load(currentPet.getPhotoUrl())
                     .placeholder(R.drawable.ic_launcher_background)
@@ -302,6 +316,7 @@ public class PetDetailFragment extends Fragment {
                     Toast.makeText(getContext(),
                             getString(R.string.pet_updated_success),
                             Toast.LENGTH_SHORT).show();
+                    // Navigate back
                     NavHostFragment.findNavController(this).navigateUp();
                 })
                 .addOnFailureListener(e -> {

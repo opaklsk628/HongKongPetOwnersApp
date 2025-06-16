@@ -60,7 +60,6 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
             textPetName.setText(pet.getName());
             textPetType.setText(pet.getType());
 
-            // display icon
             if (pet.getPhotoUrl() != null && !pet.getPhotoUrl().isEmpty()) {
                 imagePetPhoto.setVisibility(View.VISIBLE);
                 textPetIcon.setVisibility(View.GONE);
@@ -98,12 +97,12 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
                 }
             }
 
-            // Add click listener to navigate to pet detail
             itemView.setOnClickListener(v -> {
                 Bundle bundle = new Bundle();
                 bundle.putString("petId", pet.getId());
+                bundle.putString("petName", pet.getName());
                 Navigation.findNavController(v)
-                        .navigate(R.id.action_petListFragment_to_petDetailFragment, bundle);
+                        .navigate(R.id.action_petListFragment_to_petAlbumFragment, bundle);
             });
         }
     }
