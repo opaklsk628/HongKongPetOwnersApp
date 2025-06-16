@@ -60,13 +60,16 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
             textPetName.setText(pet.getName());
             textPetType.setText(pet.getType());
 
-            // display image if have
+            // display icon
             if (pet.getPhotoUrl() != null && !pet.getPhotoUrl().isEmpty()) {
                 imagePetPhoto.setVisibility(View.VISIBLE);
                 textPetIcon.setVisibility(View.GONE);
+
                 Glide.with(itemView.getContext())
                         .load(pet.getPhotoUrl())
                         .placeholder(R.drawable.ic_launcher_background)
+                        .error(R.drawable.ic_launcher_background)
+                        .centerCrop()
                         .into(imagePetPhoto);
             } else {
                 imagePetPhoto.setVisibility(View.GONE);
@@ -81,7 +84,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
                         textPetIcon.setText("🐈 Cat");
                         break;
                     case "bird":
-                        textPetIcon.setText("🦜Bird");
+                        textPetIcon.setText("🦜 Bird");
                         break;
                     case "fish":
                         textPetIcon.setText("🐠 Fish");
@@ -90,7 +93,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
                         textPetIcon.setText("🐰 Rabbit");
                         break;
                     default:
-                        textPetIcon.setText("🐾Pat");
+                        textPetIcon.setText("🐾 Pet");
                         break;
                 }
             }

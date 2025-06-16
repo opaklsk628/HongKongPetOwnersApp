@@ -1,7 +1,7 @@
 package com.example.hongkongpetownersapp;
 
 import android.app.AlertDialog;
-import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,6 +18,8 @@ import com.bumptech.glide.Glide;
 import com.example.hongkongpetownersapp.databinding.FragmentPetDetailBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.HashMap;
@@ -29,6 +31,7 @@ public class PetDetailFragment extends Fragment {
     private FragmentPetDetailBinding binding;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    private FirebaseStorage storage;
     private String petId;
     private Pet currentPet;
 
@@ -42,6 +45,7 @@ public class PetDetailFragment extends Fragment {
         // Initialize Firebase
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+        storage = FirebaseStorage.getInstance();
 
         // Get pet ID from arguments
         if (getArguments() != null) {
@@ -59,7 +63,6 @@ public class PetDetailFragment extends Fragment {
             loadPetData();
         }
 
-        // Set click listeners
         binding.buttonSave.setOnClickListener(v -> savePetData());
         binding.buttonDelete.setOnClickListener(v -> showDeleteConfirmation());
 
@@ -74,32 +77,93 @@ public class PetDetailFragment extends Fragment {
                 getViewLifecycleOwner(), (requestKey, result) -> {
                     String photoPath = result.getString("photoPath");
                     if (photoPath != null) {
-                        saveLocalPhotoPath(photoPath);
+                        uploadPhotoToFirebase(photoPath);
                     }
                 });
     }
 
-    private void saveLocalPhotoPath(String photoPath) {
+    // upload image to Firebase Storage
+    private void uploadPhotoToFirebase(String photoPath) {
+        // display upload status
+        binding.uploadProgress.setVisibility(View.VISIBLE);
+        binding.buttonTakePhoto.setEnabled(false);
+
         File photoFile = new File(photoPath);
-        if (photoFile.exists()) {
-            binding.imagePetPhoto.setVisibility(View.VISIBLE);
-            binding.textPetIcon.setVisibility(View.GONE);
+        Uri photoUri = Uri.fromFile(photoFile);
 
-            Glide.with(this)
-                    .load(photoFile)
-                    .placeholder(R.drawable.ic_launcher_background)
-                    .centerCrop()
-                    .into(binding.imagePetPhoto);
+        // create upload path
+        String fileName = "pets/" + petId + "/" + System.currentTimeMillis() + ".jpg";
+        StorageReference photoRef = storage.getReference().child(fileName);
 
-            getActivity().getSharedPreferences("pet_photos", Context.MODE_PRIVATE)
-                    .edit()
-                    .putString("pet_" + petId + "_photo", photoPath)
-                    .apply();
+        Log.d(TAG, "Uploading photo to: " + fileName);
 
-            Toast.makeText(getContext(),
-                    "Photo saved locally!",
-                    Toast.LENGTH_SHORT).show();
-        }
+        // upload file
+        photoRef.putFile(photoUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    Log.d(TAG, "Upload successful, getting download URL...");
+                    photoRef.getDownloadUrl()
+                            .addOnSuccessListener(downloadUri -> {
+                                Log.d(TAG, "Got download URL: " + downloadUri);
+                                updatePetPhotoUrl(downloadUri.toString());
+
+                                // del local  phone file
+                                photoFile.delete();
+                            })
+                            .addOnFailureListener(e -> {
+                                binding.uploadProgress.setVisibility(View.GONE);
+                                binding.buttonTakePhoto.setEnabled(true);
+                                Log.e(TAG, "Failed to get download URL", e);
+                                Toast.makeText(getContext(),
+                                        "Failed to get photo URL: " + e.getMessage(),
+                                        Toast.LENGTH_LONG).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    binding.uploadProgress.setVisibility(View.GONE);
+                    binding.buttonTakePhoto.setEnabled(true);
+                    Log.e(TAG, "Photo upload failed", e);
+                    Toast.makeText(getContext(),
+                            "Failed to upload photo: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                })
+                .addOnProgressListener(snapshot -> {
+                    // cal the upload time
+                    double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+                    Log.d(TAG, "Upload progress: " + Math.round(progress) + "%");
+                });
+    }
+
+    private void updatePetPhotoUrl(String photoUrl) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("photoUrl", photoUrl);
+
+        Log.d(TAG, "Updating pet photo URL in Firestore...");
+
+        db.collection("pets").document(petId)
+                .update(updates)
+                .addOnSuccessListener(aVoid -> {
+                    binding.uploadProgress.setVisibility(View.GONE);
+                    binding.buttonTakePhoto.setEnabled(true);
+
+                    if (currentPet != null) {
+                        currentPet.setPhotoUrl(photoUrl);
+                        displayPetPhoto();
+                    }
+
+                    Log.d(TAG, "Pet photo URL updated successfully");
+                    Toast.makeText(getContext(),
+                            "Photo uploaded successfully!",
+                            Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    binding.uploadProgress.setVisibility(View.GONE);
+                    binding.buttonTakePhoto.setEnabled(true);
+
+                    Log.e(TAG, "Error updating photo URL", e);
+                    Toast.makeText(getContext(),
+                            "Failed to save photo info: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                });
     }
 
     private void loadPetData() {
@@ -110,6 +174,7 @@ public class PetDetailFragment extends Fragment {
                     if (currentPet != null) {
                         currentPet.setId(documentSnapshot.getId());
                         displayPetData();
+                        displayPetPhoto();
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -120,26 +185,32 @@ public class PetDetailFragment extends Fragment {
                 });
     }
 
+    private void displayPetPhoto() {
+        if (currentPet != null && currentPet.getPhotoUrl() != null && !currentPet.getPhotoUrl().isEmpty()) {
+            // hide emoji icon
+            binding.textPetIcon.setVisibility(View.GONE);
+            // display image
+            binding.imagePetPhoto.setVisibility(View.VISIBLE);
+
+            // user Glide load image
+            Glide.with(this)
+                    .load(currentPet.getPhotoUrl())
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .error(R.drawable.ic_launcher_background)
+                    .centerCrop()
+                    .into(binding.imagePetPhoto);
+
+            Log.d(TAG, "Displaying photo: " + currentPet.getPhotoUrl());
+        } else {
+            // display emoji icon
+            binding.textPetIcon.setVisibility(View.VISIBLE);
+            binding.imagePetPhoto.setVisibility(View.GONE);
+        }
+    }
+
     private void displayPetData() {
         // Display pet name
         binding.editPetName.setText(currentPet.getName());
-
-        String localPhotoPath = getActivity()
-                .getSharedPreferences("pet_photos", Context.MODE_PRIVATE)
-                .getString("pet_" + petId + "_photo", null);
-
-        if (localPhotoPath != null) {
-            File photoFile = new File(localPhotoPath);
-            if (photoFile.exists()) {
-                binding.imagePetPhoto.setVisibility(View.VISIBLE);
-                binding.textPetIcon.setVisibility(View.GONE);
-                Glide.with(this)
-                        .load(photoFile)
-                        .placeholder(R.drawable.ic_launcher_background)
-                        .centerCrop()
-                        .into(binding.imagePetPhoto);
-            }
-        }
 
         // Display pet type and icon
         String petType = currentPet.getType();
@@ -231,7 +302,6 @@ public class PetDetailFragment extends Fragment {
                     Toast.makeText(getContext(),
                             getString(R.string.pet_updated_success),
                             Toast.LENGTH_SHORT).show();
-                    // Navigate back
                     NavHostFragment.findNavController(this).navigateUp();
                 })
                 .addOnFailureListener(e -> {

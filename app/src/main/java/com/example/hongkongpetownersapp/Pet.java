@@ -13,6 +13,7 @@ public class Pet {
     private String gender;
     private String photoUrl;
 
+    // Empty constructor for Firestore
     public Pet() {}
 
     // Basic constructor

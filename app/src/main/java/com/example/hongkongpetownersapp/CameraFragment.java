@@ -156,7 +156,6 @@ public class CameraFragment extends Fragment {
                             binding.buttonCapture.setEnabled(true);
                         }
 
-                        // 傳遞結果
                         Uri savedUri = Uri.fromFile(photoFile);
                         Bundle result = new Bundle();
                         result.putString("photoUri", savedUri.toString());
