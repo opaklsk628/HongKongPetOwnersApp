@@ -20,7 +20,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,7 +32,7 @@ public class PetAlbumFragment extends Fragment {
     private String petId;
     private String petName;
     private PhotoAdapter adapter;
-    private List<Object> photoItems = new ArrayList<>();
+    private List<Object> photoItems = new ArrayList<>(); // Mix of date headers and photos
 
     @Override
     public View onCreateView(
@@ -58,23 +57,25 @@ public class PetAlbumFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Set pet name
+        // Set pet name in title
         if (petName != null) {
             binding.textPetName.setText(petName + "'s Album");
         }
 
+        // Setup RecyclerView with GridLayoutManager
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                // date text size
+                // Date headers take full width (3 columns), photos take 1 column
                 return adapter.getItemViewType(position) == PhotoAdapter.TYPE_DATE ? 3 : 1;
             }
         });
         binding.recyclerPhotos.setLayoutManager(layoutManager);
 
+        // Initialize adapter
         adapter = new PhotoAdapter(photoItems, photo -> {
-            // click to show the big size photo
+            // Handle photo click - for now just show toast
             Toast.makeText(getContext(), "Photo clicked", Toast.LENGTH_SHORT).show();
         });
         binding.recyclerPhotos.setAdapter(adapter);
@@ -86,7 +87,7 @@ public class PetAlbumFragment extends Fragment {
         binding.buttonAddPhoto.setOnClickListener(v -> navigateToCamera());
         binding.buttonAddFirstPhoto.setOnClickListener(v -> navigateToCamera());
 
-        // Listen for photo result
+        // Listen for photo result from camera
         getParentFragmentManager().setFragmentResultListener("photoResult",
                 getViewLifecycleOwner(), (requestKey, result) -> {
                     String photoPath = result.getString("photoPath");
@@ -97,9 +98,11 @@ public class PetAlbumFragment extends Fragment {
     }
 
     private void loadPhotos() {
+        // Show progress bar
         binding.progressBar.setVisibility(View.VISIBLE);
         binding.layoutEmpty.setVisibility(View.GONE);
 
+        // Query photos from Firestore
         db.collection("pets").document(petId)
                 .collection("photos")
                 .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -109,25 +112,29 @@ public class PetAlbumFragment extends Fragment {
                     String lastDate = "";
                     SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
 
+                    // Process each photo document
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Photo photo = document.toObject(Photo.class);
                         photo.setId(document.getId());
 
-                        // data set to topic
+                        // Add date header if it's a new date
                         if (photo.getCreatedAt() != null) {
                             String photoDate = dateFormat.format(photo.getCreatedAt().toDate());
                             if (!photoDate.equals(lastDate)) {
-                                photoItems.add(photoDate);
+                                photoItems.add(photoDate); // Add date string as header
                                 lastDate = photoDate;
                             }
                         }
 
+                        // Add photo
                         photoItems.add(photo);
                     }
 
+                    // Update UI
                     adapter.notifyDataSetChanged();
                     binding.progressBar.setVisibility(View.GONE);
 
+                    // Show empty state if no photos
                     if (photoItems.isEmpty()) {
                         binding.layoutEmpty.setVisibility(View.VISIBLE);
                         binding.recyclerPhotos.setVisibility(View.GONE);
@@ -151,24 +158,39 @@ public class PetAlbumFragment extends Fragment {
     }
 
     private void uploadPhotoToFirebase(String photoPath) {
+        // Show progress
+        binding.progressBar.setVisibility(View.VISIBLE);
 
         java.io.File photoFile = new java.io.File(photoPath);
         android.net.Uri photoUri = android.net.Uri.fromFile(photoFile);
 
+        // Create storage reference
         String fileName = "pets/" + petId + "/" + System.currentTimeMillis() + ".jpg";
         com.google.firebase.storage.StorageReference photoRef =
                 com.google.firebase.storage.FirebaseStorage.getInstance()
                         .getReference().child(fileName);
 
+        // Upload file
         photoRef.putFile(photoUri)
                 .addOnSuccessListener(taskSnapshot -> {
+                    // Get download URL
                     photoRef.getDownloadUrl()
                             .addOnSuccessListener(downloadUri -> {
                                 savePhotoToFirestore(downloadUri.toString());
+                                // Delete local file
                                 photoFile.delete();
+                            })
+                            .addOnFailureListener(e -> {
+                                binding.progressBar.setVisibility(View.GONE);
+                                Log.e(TAG, "Failed to get download URL", e);
+                                Toast.makeText(getContext(),
+                                        "Failed to get photo URL",
+                                        Toast.LENGTH_SHORT).show();
                             });
                 })
                 .addOnFailureListener(e -> {
+                    binding.progressBar.setVisibility(View.GONE);
+                    Log.e(TAG, "Failed to upload photo", e);
                     Toast.makeText(getContext(),
                             "Failed to upload photo",
                             Toast.LENGTH_SHORT).show();
@@ -176,18 +198,24 @@ public class PetAlbumFragment extends Fragment {
     }
 
     private void savePhotoToFirestore(String photoUrl) {
+        // Create new photo object
         Photo photo = new Photo(photoUrl, petId);
 
+        // Save to Firestore
         db.collection("pets").document(petId)
                 .collection("photos")
                 .add(photo)
                 .addOnSuccessListener(documentReference -> {
+                    Log.d(TAG, "Photo saved to Firestore");
                     Toast.makeText(getContext(),
                             "Photo added successfully!",
                             Toast.LENGTH_SHORT).show();
+                    // Reload photos to show the new one
                     loadPhotos();
                 })
                 .addOnFailureListener(e -> {
+                    binding.progressBar.setVisibility(View.GONE);
+                    Log.e(TAG, "Failed to save photo to Firestore", e);
                     Toast.makeText(getContext(),
                             "Failed to save photo",
                             Toast.LENGTH_SHORT).show();

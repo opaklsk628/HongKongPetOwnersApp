@@ -8,8 +8,10 @@ public class Photo {
     private String petId;
     private Timestamp createdAt;
 
+    // Empty constructor for Firestore
     public Photo() {}
 
+    // Constructor
     public Photo(String url, String petId) {
         this.url = url;
         this.petId = petId;
@@ -17,15 +19,35 @@ public class Photo {
     }
 
     // Getters and Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public String getId() {
+        return id;
+    }
 
-    public String getUrl() { return url; }
-    public void setUrl(String url) { this.url = url; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public String getPetId() { return petId; }
-    public void setPetId(String petId) { this.petId = petId; }
+    public String getUrl() {
+        return url;
+    }
 
-    public Timestamp getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getPetId() {
+        return petId;
+    }
+
+    public void setPetId(String petId) {
+        this.petId = petId;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
 }

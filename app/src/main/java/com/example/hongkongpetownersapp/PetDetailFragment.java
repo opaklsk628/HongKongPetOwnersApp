@@ -67,6 +67,7 @@ public class PetDetailFragment extends Fragment {
         binding.buttonSave.setOnClickListener(v -> savePetData());
         binding.buttonDelete.setOnClickListener(v -> showDeleteConfirmation());
 
+        // Take photo button click
         binding.buttonTakePhoto.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putString("petId", petId);
@@ -74,6 +75,18 @@ public class PetDetailFragment extends Fragment {
                     .navigate(R.id.action_petDetailFragment_to_cameraFragment, bundle);
         });
 
+        // View album button click
+        binding.buttonViewAlbum.setOnClickListener(v -> {
+            if (currentPet != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString("petId", petId);
+                bundle.putString("petName", currentPet.getName());
+                NavHostFragment.findNavController(this)
+                        .navigate(R.id.action_petDetailFragment_to_petAlbumFragment, bundle);
+            }
+        });
+
+        // Listen for photo result
         getParentFragmentManager().setFragmentResultListener("photoResult",
                 getViewLifecycleOwner(), (requestKey, result) -> {
                     String photoPath = result.getString("photoPath");
@@ -83,30 +96,32 @@ public class PetDetailFragment extends Fragment {
                 });
     }
 
-    // upload image to Firebase Storage
+    // Upload photo to Firebase Storage
     private void uploadPhotoToFirebase(String photoPath) {
-        // upload status
+        // Show upload progress
         binding.uploadProgress.setVisibility(View.VISIBLE);
         binding.buttonTakePhoto.setEnabled(false);
 
         File photoFile = new File(photoPath);
         Uri photoUri = Uri.fromFile(photoFile);
 
-        // create upload path
+        // Create storage path
         String fileName = "pets/" + petId + "/" + System.currentTimeMillis() + ".jpg";
         StorageReference photoRef = storage.getReference().child(fileName);
 
         Log.d(TAG, "Uploading photo to: " + fileName);
 
-        // upload file
+        // Upload file
         photoRef.putFile(photoUri)
                 .addOnSuccessListener(taskSnapshot -> {
                     Log.d(TAG, "Upload successful, getting download URL...");
+                    // Get download URL
                     photoRef.getDownloadUrl()
                             .addOnSuccessListener(downloadUri -> {
                                 Log.d(TAG, "Got download URL: " + downloadUri);
                                 updatePetPhotoUrl(downloadUri.toString());
 
+                                // Delete local file
                                 photoFile.delete();
                             })
                             .addOnFailureListener(e -> {
@@ -127,12 +142,13 @@ public class PetDetailFragment extends Fragment {
                             Toast.LENGTH_LONG).show();
                 })
                 .addOnProgressListener(snapshot -> {
-                    // cal upload time
+                    // Calculate upload progress
                     double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
                     Log.d(TAG, "Upload progress: " + Math.round(progress) + "%");
                 });
     }
 
+    // Update pet photo URL in Firestore
     private void updatePetPhotoUrl(String photoUrl) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("photoUrl", photoUrl);
@@ -142,12 +158,13 @@ public class PetDetailFragment extends Fragment {
         db.collection("pets").document(petId)
                 .update(updates)
                 .addOnSuccessListener(aVoid -> {
+                    // Update local data
                     if (currentPet != null) {
                         currentPet.setPhotoUrl(photoUrl);
                         displayPetPhoto();
                     }
 
-                    // create photos record
+                    // Create photo record in photos subcollection
                     Photo photo = new Photo(photoUrl, petId);
                     db.collection("pets").document(petId)
                             .collection("photos")
@@ -166,6 +183,7 @@ public class PetDetailFragment extends Fragment {
                                 binding.buttonTakePhoto.setEnabled(true);
 
                                 Log.e(TAG, "Failed to create photo record", e);
+                                // Photo uploaded but record creation failed
                                 Toast.makeText(getContext(),
                                         "Photo uploaded but failed to save record",
                                         Toast.LENGTH_LONG).show();
@@ -201,12 +219,15 @@ public class PetDetailFragment extends Fragment {
                 });
     }
 
-    // display pet photo
+    // Display pet photo
     private void displayPetPhoto() {
         if (currentPet != null && currentPet.getPhotoUrl() != null && !currentPet.getPhotoUrl().isEmpty()) {
+            // Hide emoji icon
             binding.textPetIcon.setVisibility(View.GONE);
+            // Show photo
             binding.imagePetPhoto.setVisibility(View.VISIBLE);
 
+            // Use Glide to load photo
             Glide.with(this)
                     .load(currentPet.getPhotoUrl())
                     .placeholder(R.drawable.ic_launcher_background)
@@ -216,7 +237,7 @@ public class PetDetailFragment extends Fragment {
 
             Log.d(TAG, "Displaying photo: " + currentPet.getPhotoUrl());
         } else {
-            // display emoji icon
+            // Show emoji icon
             binding.textPetIcon.setVisibility(View.VISIBLE);
             binding.imagePetPhoto.setVisibility(View.GONE);
         }

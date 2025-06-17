@@ -32,6 +32,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
+        // Check if item is String (date header) or Photo object
         return items.get(position) instanceof String ? TYPE_DATE : TYPE_PHOTO;
     }
 
@@ -63,6 +64,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return items.size();
     }
 
+    // ViewHolder for date headers
     static class DateViewHolder extends RecyclerView.ViewHolder {
         private TextView textDate;
 
@@ -76,6 +78,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
+    // ViewHolder for photos
     static class PhotoViewHolder extends RecyclerView.ViewHolder {
         private ImageView imagePhoto;
 
@@ -85,12 +88,15 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         public void bind(Photo photo, OnPhotoClickListener listener) {
+            // Load photo using Glide
             Glide.with(itemView.getContext())
                     .load(photo.getUrl())
                     .placeholder(R.drawable.ic_launcher_background)
+                    .error(R.drawable.ic_launcher_background)
                     .centerCrop()
                     .into(imagePhoto);
 
+            // Set click listener
             itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onPhotoClick(photo);

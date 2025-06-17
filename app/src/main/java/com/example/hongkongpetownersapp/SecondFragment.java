@@ -63,10 +63,12 @@ public class SecondFragment extends Fragment {
                     .navigate(R.id.action_SecondFragment_to_addPetFragment);
         });
 
-        // Set my pets button click listener
+        // Set my pets button click listener - Navigate with details mode
         binding.buttonMyPets.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("mode", "details"); // Mark as details mode
             NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_SecondFragment_to_petListFragment);
+                    .navigate(R.id.action_SecondFragment_to_petListFragment, bundle);
         });
 
         // Set feature button click listeners
@@ -90,19 +92,25 @@ public class SecondFragment extends Fragment {
     }
 
     private void setupFeatureButtons() {
+        // Pet Parks - Coming soon
         binding.buttonPetParks.setOnClickListener(v -> {
             Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
         });
 
+        // Pet Album - Navigate to pet list with album mode
         binding.buttonPetAlbum.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("mode", "album"); // Mark as album mode
             NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_SecondFragment_to_petListFragment);
+                    .navigate(R.id.action_SecondFragment_to_petListFragment, bundle);
         });
 
+        // Vaccine Records - Coming soon
         binding.buttonVaccineRecords.setOnClickListener(v -> {
             Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
         });
 
+        // Health Reminders - Coming soon
         binding.buttonHealthReminders.setOnClickListener(v -> {
             Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
         });

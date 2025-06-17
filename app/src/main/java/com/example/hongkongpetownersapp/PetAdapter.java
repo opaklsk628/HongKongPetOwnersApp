@@ -18,9 +18,12 @@ import java.util.List;
 public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
 
     private List<Pet> pets;
+    private String mode; // Navigation mode: "details" or "album"
 
-    public PetAdapter(List<Pet> pets) {
+    // Constructor with mode parameter
+    public PetAdapter(List<Pet> pets, String mode) {
         this.pets = pets;
+        this.mode = mode;
     }
 
     @NonNull
@@ -34,7 +37,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull PetViewHolder holder, int position) {
         Pet pet = pets.get(position);
-        holder.bind(pet);
+        holder.bind(pet, mode); // Pass mode to bind method
     }
 
     @Override
@@ -56,10 +59,11 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
             imagePetPhoto = itemView.findViewById(R.id.image_pet_photo);
         }
 
-        public void bind(Pet pet) {
+        public void bind(Pet pet, String mode) {
             textPetName.setText(pet.getName());
             textPetType.setText(pet.getType());
 
+            // Display photo if available
             if (pet.getPhotoUrl() != null && !pet.getPhotoUrl().isEmpty()) {
                 imagePetPhoto.setVisibility(View.VISIBLE);
                 textPetIcon.setVisibility(View.GONE);
@@ -97,12 +101,21 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
                 }
             }
 
+            // Set click listener based on mode
             itemView.setOnClickListener(v -> {
                 Bundle bundle = new Bundle();
                 bundle.putString("petId", pet.getId());
-                bundle.putString("petName", pet.getName());
-                Navigation.findNavController(v)
-                        .navigate(R.id.action_petListFragment_to_petAlbumFragment, bundle);
+
+                if ("album".equals(mode)) {
+                    // Album mode: navigate to pet album
+                    bundle.putString("petName", pet.getName());
+                    Navigation.findNavController(v)
+                            .navigate(R.id.action_petListFragment_to_petAlbumFragment, bundle);
+                } else {
+                    // Details mode: navigate to pet details
+                    Navigation.findNavController(v)
+                            .navigate(R.id.action_petListFragment_to_petDetailFragment, bundle);
+                }
             });
         }
     }

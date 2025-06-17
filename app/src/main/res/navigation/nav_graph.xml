@@ -45,7 +45,12 @@
             android:id="@+id/action_petListFragment_to_addPetFragment"
             app:destination="@id/addPetFragment" />
 
-        <!-- Photo Album Fragment -->
+        <!-- Navigate to pet detail page -->
+        <action
+            android:id="@+id/action_petListFragment_to_petDetailFragment"
+            app:destination="@id/petDetailFragment" />
+
+        <!-- Navigate to pet album -->
         <action
             android:id="@+id/action_petListFragment_to_petAlbumFragment"
             app:destination="@id/petAlbumFragment" />
@@ -66,9 +71,14 @@
         <action
             android:id="@+id/action_petDetailFragment_to_cameraFragment"
             app:destination="@id/cameraFragment" />
+
+        <!-- Add action to view album -->
+        <action
+            android:id="@+id/action_petDetailFragment_to_petAlbumFragment"
+            app:destination="@id/petAlbumFragment" />
     </fragment>
 
-    <!-- Photo Album Fragment -->
+    <!-- Pet Album Fragment -->
     <fragment
         android:id="@+id/petAlbumFragment"
         android:name="com.example.hongkongpetownersapp.PetAlbumFragment"

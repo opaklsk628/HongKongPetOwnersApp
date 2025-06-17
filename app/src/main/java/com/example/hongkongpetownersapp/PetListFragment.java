@@ -29,6 +29,7 @@ public class PetListFragment extends Fragment {
     private FirebaseAuth mAuth;
     private PetAdapter petAdapter;
     private List<Pet> petList = new ArrayList<>();
+    private String mode = "details";
 
     @Override
     public View onCreateView(
@@ -40,6 +41,11 @@ public class PetListFragment extends Fragment {
         // Initialize Firebase
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+
+        // Get navigation mode from arguments
+        if (getArguments() != null) {
+            mode = getArguments().getString("mode", "details");
+        }
 
         return binding.getRoot();
     }
@@ -67,7 +73,8 @@ public class PetListFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        petAdapter = new PetAdapter(petList);
+        // Pass mode to adapter
+        petAdapter = new PetAdapter(petList, mode);
         binding.recyclerViewPets.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerViewPets.setAdapter(petAdapter);
     }
