@@ -92,9 +92,10 @@ public class SecondFragment extends Fragment {
     }
 
     private void setupFeatureButtons() {
-        // Pet Parks - Coming soon
+        // Pet Parks - Navigate to pet parks map
         binding.buttonPetParks.setOnClickListener(v -> {
-            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_SecondFragment_to_petParksFragment);
         });
 
         // Pet Album - Navigate to pet list with album mode

@@ -54,6 +54,11 @@ dependencies {
     implementation 'androidx.camera:camera-view:1.2.3'
     implementation 'com.github.bumptech.glide:glide:4.15.1'
 
+    // Google Maps and Location Services
+    implementation 'com.google.android.gms:play-services-maps:18.2.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.android.gms:play-services-places:17.0.0'
+
     // just test
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit

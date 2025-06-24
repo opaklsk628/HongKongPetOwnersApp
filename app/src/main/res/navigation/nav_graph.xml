@@ -45,12 +45,10 @@
             android:id="@+id/action_petListFragment_to_addPetFragment"
             app:destination="@id/addPetFragment" />
 
-        <!-- Navigate to pet detail page -->
         <action
             android:id="@+id/action_petListFragment_to_petDetailFragment"
             app:destination="@id/petDetailFragment" />
 
-        <!-- Navigate to pet album -->
         <action
             android:id="@+id/action_petListFragment_to_petAlbumFragment"
             app:destination="@id/petAlbumFragment" />
@@ -72,13 +70,11 @@
             android:id="@+id/action_petDetailFragment_to_cameraFragment"
             app:destination="@id/cameraFragment" />
 
-        <!-- Add action to view album -->
         <action
             android:id="@+id/action_petDetailFragment_to_petAlbumFragment"
             app:destination="@id/petAlbumFragment" />
     </fragment>
 
-    <!-- Pet Album Fragment -->
     <fragment
         android:id="@+id/petAlbumFragment"
         android:name="com.example.hongkongpetownersapp.PetAlbumFragment"
@@ -95,5 +91,34 @@
         android:name="com.example.hongkongpetownersapp.CameraFragment"
         android:label="@string/take_photo"
         tools:layout="@layout/fragment_camera" />
+
+    <fragment
+        android:id="@+id/SecondFragment"
+        android:name="com.example.hongkongpetownersapp.SecondFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_second">
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+
+        <action
+            android:id="@+id/action_SecondFragment_to_petListFragment"
+            app:destination="@id/petListFragment" />
+
+        <action
+            android:id="@+id/action_SecondFragment_to_addPetFragment"
+            app:destination="@id/addPetFragment" />
+        
+        <action
+            android:id="@+id/action_SecondFragment_to_petParksFragment"
+            app:destination="@id/petParksFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/petParksFragment"
+        android:name="com.example.hongkongpetownersapp.PetParksFragment"
+        android:label="Pet Parks"
+        tools:layout="@layout/fragment_pet_parks" />
 
 </navigation>
