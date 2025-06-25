@@ -1,6 +1,5 @@
 package com.example.hongkongpetownersapp;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,12 +46,6 @@ public class SecondFragment extends Fragment {
 
         // Display user info
         displayUserInfo();
-
-        // Set logout button click listener
-        binding.buttonLogout.setOnClickListener(v -> showLogoutConfirmation());
-
-        // Set account settings button click listener
-        binding.buttonAccountSettings.setOnClickListener(v -> showAccountSettings());
 
         // Set verify email button click listener
         binding.buttonVerifyEmail.setOnClickListener(v -> sendVerificationEmail());
@@ -117,79 +110,6 @@ public class SecondFragment extends Fragment {
         });
     }
 
-    private void showAccountSettings() {
-        String[] options = {
-                getString(R.string.change_password),
-                getString(R.string.change_email),
-                getString(R.string.delete_account)
-        };
-
-        new AlertDialog.Builder(requireContext())
-                .setTitle(getString(R.string.account_settings))
-                .setItems(options, (dialog, which) -> {
-                    switch (which) {
-                        case 0:
-                            changePassword();
-                            break;
-                        case 1:
-                            changeEmail();
-                            break;
-                        case 2:
-                            deleteAccount();
-                            break;
-                    }
-                })
-                .setNegativeButton(getString(R.string.cancel), null)
-                .show();
-    }
-
-    private void changePassword() {
-        if (currentUser != null && currentUser.getEmail() != null) {
-            mAuth.sendPasswordResetEmail(currentUser.getEmail())
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getContext(),
-                                    getString(R.string.password_reset_email_sent),
-                                    Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(getContext(),
-                                    getString(R.string.password_reset_failed),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
-        }
-    }
-
-    private void changeEmail() {
-        Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
-        // Implementation for email change would require re-authentication
-    }
-
-    private void deleteAccount() {
-        new AlertDialog.Builder(requireContext())
-                .setTitle(getString(R.string.delete_account))
-                .setMessage(getString(R.string.delete_account_confirmation))
-                .setPositiveButton(getString(R.string.delete), (dialog, which) -> {
-                    if (currentUser != null) {
-                        currentUser.delete()
-                                .addOnCompleteListener(task -> {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(getContext(),
-                                                getString(R.string.account_deleted),
-                                                Toast.LENGTH_SHORT).show();
-                                        navigateToLogin();
-                                    } else {
-                                        Toast.makeText(getContext(),
-                                                getString(R.string.delete_account_failed),
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                    }
-                })
-                .setNegativeButton(getString(R.string.cancel), null)
-                .show();
-    }
-
     private void sendVerificationEmail() {
         if (currentUser != null) {
             currentUser.sendEmailVerification()
@@ -205,19 +125,6 @@ public class SecondFragment extends Fragment {
                         }
                     });
         }
-    }
-
-    private void showLogoutConfirmation() {
-        new AlertDialog.Builder(requireContext())
-                .setTitle(getString(R.string.logout_button))
-                .setMessage(getString(R.string.logout_confirmation))
-                .setPositiveButton(getString(R.string.logout_button), (dialog, which) -> {
-                    mAuth.signOut();
-                    Toast.makeText(getContext(), getString(R.string.logout_success), Toast.LENGTH_SHORT).show();
-                    navigateToLogin();
-                })
-                .setNegativeButton(getString(R.string.cancel), null)
-                .show();
     }
 
     // Navigate to login screen

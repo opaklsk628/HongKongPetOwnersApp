@@ -18,7 +18,7 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:cardCornerRadius="24dp"
@@ -43,6 +43,25 @@
                 android:textSize="16sp"
                 android:inputType="text"
                 android:imeOptions="actionSearch" />
+
+            <!-- Clear Button -->
+            <ImageButton
+                android:id="@+id/button_clear"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:tint="#666666"
+                android:visibility="gone" />
+
+            <!-- Voice Search Button -->
+            <ImageButton
+                android:id="@+id/button_voice"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_btn_speak_now"
+                android:tint="@color/design_default_color_primary" />
 
             <ImageButton
                 android:id="@+id/button_search"

@@ -107,4 +107,9 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="confirm">Confirm</string>
+
+    <!-- Menu Items -->
+    <string name="sign_out">Sign Out</string>
+    <string name="sign_out_confirmation">Are you sure you want to sign out?</string>
+    <string name="sign_out_success">Successfully signed out</string>
 </resources>

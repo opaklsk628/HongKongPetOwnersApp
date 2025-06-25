@@ -7,9 +7,9 @@ public class PetPark {
     private String district;
     private String area;
     private LatLng location;
-    private boolean hasDesignatedArea; // ⭐
-    private boolean hasWasteBin;       // 💩
-    private boolean hasToilet;         // 🚻
+    private boolean hasDesignatedArea;
+    private boolean hasWasteBin;
+    private boolean hasToilet;
 
     public PetPark(String name, String district, String area, LatLng location,
                    boolean hasDesignatedArea, boolean hasWasteBin, boolean hasToilet) {
@@ -31,7 +31,7 @@ public class PetPark {
     public boolean hasWasteBin() { return hasWasteBin; }
     public boolean hasToilet() { return hasToilet; }
 
-    // Get facilities string for map snippet in English format
+
     public String getFacilitiesString() {
         StringBuilder facilities = new StringBuilder();
         facilities.append("Facilities: ");

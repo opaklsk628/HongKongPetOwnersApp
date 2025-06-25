@@ -1,6 +1,7 @@
 package com.example.hongkongpetownersapp;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -10,12 +11,14 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -45,6 +48,7 @@ import java.util.Locale;
 public class PetParksFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String TAG = "PetParksFragment";
+    private static final int SPEECH_REQUEST_CODE = 100;
     private FragmentPetParksBinding binding;
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
@@ -70,6 +74,28 @@ public class PetParksFragment extends Fragment implements OnMapReadyCallback {
                     Toast.makeText(getContext(),
                             "Location permission is required to show nearby parks",
                             Toast.LENGTH_LONG).show();
+                }
+            });
+
+    // Voice recognition result launcher
+    private final ActivityResultLauncher<Intent> voiceRecognitionLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == getActivity().RESULT_OK && result.getData() != null) {
+                    // Get voice recognition results
+                    ArrayList<String> matches = result.getData()
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+                    if (matches != null && !matches.isEmpty()) {
+                        // Use the first match as search text
+                        String voiceInput = matches.get(0);
+                        binding.editSearch.setText(voiceInput);
+
+                        // Show clear button since we have text
+                        binding.buttonClear.setVisibility(View.VISIBLE);
+
+                        // Automatically search
+                        searchLocation(voiceInput);
+                    }
                 }
             });
 
@@ -101,9 +127,63 @@ public class PetParksFragment extends Fragment implements OnMapReadyCallback {
 
         // Setup search functionality
         setupSearchBox();
+
+        // Setup voice search button
+        setupVoiceSearch();
+    }
+
+    private void setupVoiceSearch() {
+        // Set voice button click listener
+        binding.buttonVoice.setOnClickListener(v -> {
+            startVoiceRecognition();
+        });
+    }
+
+    private void startVoiceRecognition() {
+        // Check if voice recognition is available
+        if (!getActivity().getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_MICROPHONE)) {
+            Toast.makeText(getContext(),
+                    "您的設備不支援語音識別",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Create voice recognition intent
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+
+        // Set language to Cantonese (Hong Kong)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-HK");
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "zh-HK");
+        intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "zh-HK");
+
+        // Set prompt message in Chinese
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                "請說出地點或公園名稱");
+
+        // Maximum results to return
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
+
+        try {
+            // Start voice recognition activity
+            voiceRecognitionLauncher.launch(intent);
+        } catch (Exception e) {
+            Toast.makeText(getContext(),
+                    "語音識別不可用",
+                    Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Voice recognition error", e);
+        }
     }
 
     private void setupSearchBox() {
+        // Setup clear button click listener
+        binding.buttonClear.setOnClickListener(v -> {
+            binding.editSearch.setText("");
+            binding.buttonClear.setVisibility(View.GONE);
+        });
+
         // Add text change listener for search
         binding.editSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -114,20 +194,21 @@ public class PetParksFragment extends Fragment implements OnMapReadyCallback {
 
             @Override
             public void afterTextChanged(Editable s) {
+                // Show/hide clear button based on text
+                if (s.length() > 0) {
+                    binding.buttonClear.setVisibility(View.VISIBLE);
+                } else {
+                    binding.buttonClear.setVisibility(View.GONE);
+                }
+
+                // Check if markers exist
+                if (markers.isEmpty() && mMap != null) {
+                    loadPetParks();
+                }
+
                 // Filter parks based on search text
                 String searchText = s.toString().toLowerCase().trim();
-                if (searchText.isEmpty()) {
-                    // Show all markers
-                    for (Marker marker : markers) {
-                        marker.setVisible(true);
-                    }
-                } else {
-                    // Filter markers
-                    for (Marker marker : markers) {
-                        String title = marker.getTitle().toLowerCase();
-                        marker.setVisible(title.contains(searchText));
-                    }
-                }
+                filterMarkersBySearchText(searchText);
             }
         });
 
@@ -148,13 +229,51 @@ public class PetParksFragment extends Fragment implements OnMapReadyCallback {
             if (addresses != null && !addresses.isEmpty()) {
                 Address address = addresses.get(0);
                 LatLng location = new LatLng(address.getLatitude(), address.getLongitude());
+
+                // Move camera to the searched location
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 14));
+
+                // Check if markers exist, if not, reload them
+                if (markers.isEmpty()) {
+                    loadPetParks();
+                }
+
+                // Filter markers based on search text
+                filterMarkersBySearchText(locationName.toLowerCase().trim());
+
             } else {
-                Toast.makeText(getContext(), "Location not found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "找不到該位置", Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {
             Log.e(TAG, "Geocoder error", e);
-            Toast.makeText(getContext(), "Search error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "搜索出錯", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void filterMarkersBySearchText(String searchText) {
+        if (searchText.isEmpty()) {
+            // Show all markers
+            for (Marker marker : markers) {
+                marker.setVisible(true);
+            }
+        } else {
+            // Filter markers based on search text
+            int visibleCount = 0;
+            for (Marker marker : markers) {
+                String title = marker.getTitle().toLowerCase();
+                boolean isVisible = title.contains(searchText);
+                marker.setVisible(isVisible);
+                if (isVisible) {
+                    visibleCount++;
+                }
+            }
+
+            // Show count of matching parks
+            if (visibleCount > 0) {
+                Toast.makeText(getContext(),
+                        "找到 " + visibleCount + " 個相關的寵物公園",
+                        Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -211,14 +330,36 @@ public class PetParksFragment extends Fragment implements OnMapReadyCallback {
         mMap = googleMap;
 
         // Enable map UI controls
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(false);
+        mMap.getUiSettings().setCompassEnabled(false);
         mMap.getUiSettings().setMapToolbarEnabled(true);
 
         // Enable my location if permission granted
         if (ContextCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+// Move location button to bottom right
+            View mapView = getChildFragmentManager().findFragmentById(R.id.map).getView();
+            if (mapView != null && mapView.findViewById(Integer.parseInt("1")) != null) {
+                // Get the view containing the location button
+                View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+
+                // Create layout params for bottom right
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.WRAP_CONTENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+                // Position at bottom right
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+
+                // Set margins (right: 20dp, bottom: 100dp to avoid overlapping with zoom controls)
+                layoutParams.setMargins(0, 0, 20, 100);
+
+                locationButton.setLayoutParams(layoutParams);
+            }
         }
 
         // Set custom info window adapter to handle multi-line text
@@ -248,6 +389,14 @@ public class PetParksFragment extends Fragment implements OnMapReadyCallback {
 
                 return view;
             }
+        });
+
+        // Add map click listener to clear search when clicking on map
+        mMap.setOnMapClickListener(latLng -> {
+            // Clear search box
+            binding.editSearch.setText("");
+            // Show all markers
+            filterMarkersBySearchText("");
         });
 
         // If location already available, setup map
@@ -321,7 +470,7 @@ public class PetParksFragment extends Fragment implements OnMapReadyCallback {
 
         // Show park count
         Toast.makeText(getContext(),
-                "Found " + petParks.size() + " pet parks in Hong Kong",
+                "找到 " + petParks.size() + " 個寵物公園",
                 Toast.LENGTH_SHORT).show();
     }
 
