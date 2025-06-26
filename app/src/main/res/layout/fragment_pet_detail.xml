@@ -66,14 +66,14 @@
             android:gravity="center"
             android:layout_marginBottom="24dp">
 
-            <!-- Take Photo Button -->
+            <!-- Change Icon Button -->
             <Button
-                android:id="@+id/button_take_photo"
+                android:id="@+id/button_change_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/take_photo"
+                android:text="Change Icon"
                 android:layout_marginEnd="8dp"
-                app:icon="@android:drawable/ic_menu_camera" />
+                app:icon="@android:drawable/ic_menu_edit" />
 
             <!-- View Album Button -->
             <Button

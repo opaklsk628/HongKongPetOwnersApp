@@ -8,5 +8,8 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         FirebaseApp.initializeApp(this);
+
+        // Create notification channel for local notifications
+        LocalNotificationHelper.createNotificationChannel(this);
     }
 }

@@ -33,6 +33,14 @@
         <action
             android:id="@+id/action_SecondFragment_to_addPetFragment"
             app:destination="@id/addPetFragment" />
+
+        <action
+            android:id="@+id/action_SecondFragment_to_petParksFragment"
+            app:destination="@id/petParksFragment" />
+
+        <action
+            android:id="@+id/action_SecondFragment_to_healthRemindersFragment"
+            app:destination="@id/healthRemindersFragment" />
     </fragment>
 
     <fragment
@@ -52,6 +60,10 @@
         <action
             android:id="@+id/action_petListFragment_to_petAlbumFragment"
             app:destination="@id/petAlbumFragment" />
+
+        <action
+            android:id="@+id/action_petListFragment_to_vaccineRecordsFragment"
+            app:destination="@id/vaccineRecordsFragment" />
     </fragment>
 
     <fragment
@@ -93,32 +105,96 @@
         tools:layout="@layout/fragment_camera" />
 
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.hongkongpetownersapp.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
-
-        <action
-            android:id="@+id/action_SecondFragment_to_petListFragment"
-            app:destination="@id/petListFragment" />
-
-        <action
-            android:id="@+id/action_SecondFragment_to_addPetFragment"
-            app:destination="@id/addPetFragment" />
-        
-        <action
-            android:id="@+id/action_SecondFragment_to_petParksFragment"
-            app:destination="@id/petParksFragment" />
-    </fragment>
-
-    <fragment
         android:id="@+id/petParksFragment"
         android:name="com.example.hongkongpetownersapp.PetParksFragment"
         android:label="Pet Parks"
         tools:layout="@layout/fragment_pet_parks" />
+
+    <!-- Vaccine Records Section -->
+    <fragment
+        android:id="@+id/vaccineRecordsFragment"
+        android:name="com.example.hongkongpetownersapp.VaccineRecordsFragment"
+        android:label="Vaccine Records"
+        tools:layout="@layout/fragment_vaccine_records">
+
+        <action
+            android:id="@+id/action_vaccineRecordsFragment_to_addVaccineFragment"
+            app:destination="@id/addVaccineFragment" />
+
+        <action
+            android:id="@+id/action_vaccineRecordsFragment_to_vaccineDetailFragment"
+            app:destination="@id/vaccineDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addVaccineFragment"
+        android:name="com.example.hongkongpetownersapp.AddVaccineFragment"
+        android:label="Add Vaccine"
+        tools:layout="@layout/fragment_add_vaccine" />
+
+    <fragment
+        android:id="@+id/vaccineDetailFragment"
+        android:name="com.example.hongkongpetownersapp.VaccineDetailFragment"
+        android:label="Vaccine Details"
+        tools:layout="@layout/fragment_vaccine_detail" />
+
+    <!-- Health Reminders Section -->
+    <fragment
+        android:id="@+id/healthRemindersFragment"
+        android:name="com.example.hongkongpetownersapp.HealthRemindersFragment"
+        android:label="Health Reminders"
+        tools:layout="@layout/fragment_health_reminders">
+
+        <action
+            android:id="@+id/action_healthRemindersFragment_to_petListFragment"
+            app:destination="@id/petListFragment" />
+
+        <action
+            android:id="@+id/action_petListFragment_to_healthRemindersFragment"
+            app:destination="@id/healthRemindersFragment" />
+
+        <action
+            android:id="@+id/action_healthRemindersFragment_to_reminderDetailFragment"
+            app:destination="@id/reminderDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addReminderFragment"
+        android:name="com.example.hongkongpetownersapp.AddReminderFragment"
+        android:label="Add Reminder"
+        tools:layout="@layout/fragment_add_reminder" />
+
+    <fragment
+        android:id="@+id/reminderDetailFragment"
+        android:name="com.example.hongkongpetownersapp.ReminderDetailFragment"
+        android:label="Reminder Details"
+        tools:layout="@layout/fragment_reminder_detail" />
+
+    <fragment
+        android:id="@+id/healthRemindersFragment"
+        android:name="com.example.hongkongpetownersapp.HealthRemindersFragment"
+        android:label="Health Reminders"
+        tools:layout="@layout/fragment_health_reminders">
+
+        <action
+            android:id="@+id/action_healthRemindersFragment_to_addHealthReminderFragment"
+            app:destination="@id/addHealthReminderFragment" />
+
+        <action
+            android:id="@+id/action_healthRemindersFragment_to_healthReminderDetailFragment"
+            app:destination="@id/healthReminderDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addHealthReminderFragment"
+        android:name="com.example.hongkongpetownersapp.AddHealthReminderFragment"
+        android:label="Add Health Reminder"
+        tools:layout="@layout/fragment_add_health_reminder" />
+
+    <fragment
+        android:id="@+id/healthReminderDetailFragment"
+        android:name="com.example.hongkongpetownersapp.HealthReminderDetailFragment"
+        android:label="Edit Reminder"
+        tools:layout="@layout/fragment_health_reminder_detail" />
 
 </navigation>

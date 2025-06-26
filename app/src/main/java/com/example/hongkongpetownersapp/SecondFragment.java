@@ -99,14 +99,24 @@ public class SecondFragment extends Fragment {
                     .navigate(R.id.action_SecondFragment_to_petListFragment, bundle);
         });
 
-        // Vaccine Records - Coming soon
+        // Vaccine Records - Navigate to pet list with vaccine mode
         binding.buttonVaccineRecords.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("mode", "vaccine"); // Mark as vaccine mode
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_SecondFragment_to_petListFragment, bundle);
+        });
+
+        // Walking Routes - Coming soon
+        binding.buttonWalkingRoutes.setOnClickListener(v -> {
             Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
         });
 
-        // Health Reminders - Coming soon
+        // Health Reminders - Navigate to health reminders list
         binding.buttonHealthReminders.setOnClickListener(v -> {
-            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+            // Navigate without pet selection to show all reminders
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_SecondFragment_to_healthRemindersFragment);
         });
     }
 

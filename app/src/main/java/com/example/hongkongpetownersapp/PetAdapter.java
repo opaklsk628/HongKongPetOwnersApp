@@ -18,7 +18,7 @@ import java.util.List;
 public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
 
     private List<Pet> pets;
-    private String mode; // Navigation mode: "details" or "album"
+    private String mode; // Navigation mode: "details", "album", "vaccine", or "reminder"
 
     // Constructor with mode parameter
     public PetAdapter(List<Pet> pets, String mode) {
@@ -111,8 +111,18 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
                     bundle.putString("petName", pet.getName());
                     Navigation.findNavController(v)
                             .navigate(R.id.action_petListFragment_to_petAlbumFragment, bundle);
+                } else if ("vaccine".equals(mode)) {
+                    // Vaccine mode: navigate to vaccine records
+                    bundle.putString("petName", pet.getName());
+                    Navigation.findNavController(v)
+                            .navigate(R.id.action_petListFragment_to_vaccineRecordsFragment, bundle);
+                } else if ("reminder".equals(mode)) {
+                    // Health reminder mode: navigate to health reminders for specific pet
+                    bundle.putString("petName", pet.getName());
+                    Navigation.findNavController(v)
+                            .navigate(R.id.action_petListFragment_to_healthRemindersFragment, bundle);
                 } else {
-                    // Details mode: navigate to pet details
+                    // Details mode (default): navigate to pet details
                     Navigation.findNavController(v)
                             .navigate(R.id.action_petListFragment_to_petDetailFragment, bundle);
                 }

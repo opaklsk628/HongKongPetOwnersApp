@@ -82,7 +82,7 @@
                 android:id="@+id/button_add_first_photo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Take First Photo"
+                android:text="Add First Photo"
                 android:layout_marginTop="24dp" />
 
         </LinearLayout>

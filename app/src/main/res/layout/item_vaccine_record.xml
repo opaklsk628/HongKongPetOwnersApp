@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Top Row: Vaccine Name and Status -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/text_vaccine_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Vaccine Name"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/text_due_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OVERDUE"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/holo_red_dark"
+                android:background="@drawable/status_badge_background"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Vaccination Date -->
+        <TextView
+            android:id="@+id/text_vaccination_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Given: 01 Jan 2024"
+            android:textSize="14sp"
+            android:textColor="#666666" />
+
+        <!-- Next Due Date -->
+        <TextView
+            android:id="@+id/text_next_due_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Next due: 01 Jan 2025"
+            android:textSize="14sp"
+            android:textColor="#666666" />
+
+        <!-- Veterinarian -->
+        <TextView
+            android:id="@+id/text_veterinarian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Vet: Dr. Smith"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:visibility="gone" />
+
+        <!-- Clinic -->
+        <TextView
+            android:id="@+id/text_clinic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Clinic: Happy Pets Clinic"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

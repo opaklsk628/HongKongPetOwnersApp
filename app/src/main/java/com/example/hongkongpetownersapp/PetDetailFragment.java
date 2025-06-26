@@ -1,8 +1,11 @@
 package com.example.hongkongpetownersapp;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
@@ -34,6 +39,19 @@ public class PetDetailFragment extends Fragment {
     private FirebaseStorage storage;
     private String petId;
     private Pet currentPet;
+
+    // Gallery picker launcher
+    private ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Uri imageUri = result.getData().getData();
+                    if (imageUri != null) {
+                        uploadImageFromGallery(imageUri);
+                    }
+                }
+            }
+    );
 
     @Override
     public View onCreateView(
@@ -67,13 +85,8 @@ public class PetDetailFragment extends Fragment {
         binding.buttonSave.setOnClickListener(v -> savePetData());
         binding.buttonDelete.setOnClickListener(v -> showDeleteConfirmation());
 
-        // Take photo button click
-        binding.buttonTakePhoto.setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putString("petId", petId);
-            NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_petDetailFragment_to_cameraFragment, bundle);
-        });
+        // Change icon button click - show options dialog
+        binding.buttonChangeIcon.setOnClickListener(v -> showImageSourceDialog());
 
         // View album button click
         binding.buttonViewAlbum.setOnClickListener(v -> {
@@ -86,21 +99,101 @@ public class PetDetailFragment extends Fragment {
             }
         });
 
-        // Listen for photo result
+        // Listen for photo result from camera
         getParentFragmentManager().setFragmentResultListener("photoResult",
                 getViewLifecycleOwner(), (requestKey, result) -> {
                     String photoPath = result.getString("photoPath");
                     if (photoPath != null) {
-                        uploadPhotoToFirebase(photoPath);
+                        uploadPhotoFromCamera(photoPath);
                     }
                 });
     }
 
-    // Upload photo to Firebase Storage
-    private void uploadPhotoToFirebase(String photoPath) {
+    // Show dialog to choose image source
+    private void showImageSourceDialog() {
+        String[] options = {"Take Photo", "Choose from Gallery"};
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Change Pet Icon")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        // Take photo
+                        navigateToCamera();
+                    } else if (which == 1) {
+                        // Choose from gallery
+                        openGallery();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    // Navigate to camera fragment
+    private void navigateToCamera() {
+        Bundle bundle = new Bundle();
+        bundle.putString("petId", petId);
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.action_petDetailFragment_to_cameraFragment, bundle);
+    }
+
+    // Open gallery to pick image
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        galleryLauncher.launch(intent);
+    }
+
+    // Upload image from gallery
+    private void uploadImageFromGallery(Uri imageUri) {
         // Show upload progress
         binding.uploadProgress.setVisibility(View.VISIBLE);
-        binding.buttonTakePhoto.setEnabled(false);
+        binding.buttonChangeIcon.setEnabled(false);
+
+        // Create storage path
+        String fileName = "pets/" + petId + "/" + System.currentTimeMillis() + ".jpg";
+        StorageReference photoRef = storage.getReference().child(fileName);
+
+        Log.d(TAG, "Uploading gallery image to: " + fileName);
+
+        // Upload file
+        photoRef.putFile(imageUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    Log.d(TAG, "Upload successful, getting download URL...");
+                    // Get download URL
+                    photoRef.getDownloadUrl()
+                            .addOnSuccessListener(downloadUri -> {
+                                Log.d(TAG, "Got download URL: " + downloadUri);
+                                updatePetPhotoUrl(downloadUri.toString());
+                            })
+                            .addOnFailureListener(e -> {
+                                binding.uploadProgress.setVisibility(View.GONE);
+                                binding.buttonChangeIcon.setEnabled(true);
+                                Log.e(TAG, "Failed to get download URL", e);
+                                Toast.makeText(getContext(),
+                                        "Failed to get photo URL: " + e.getMessage(),
+                                        Toast.LENGTH_LONG).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    binding.uploadProgress.setVisibility(View.GONE);
+                    binding.buttonChangeIcon.setEnabled(true);
+                    Log.e(TAG, "Photo upload failed", e);
+                    Toast.makeText(getContext(),
+                            "Failed to upload photo: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                })
+                .addOnProgressListener(snapshot -> {
+                    // Calculate upload progress
+                    double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+                    Log.d(TAG, "Upload progress: " + Math.round(progress) + "%");
+                });
+    }
+
+    // Upload photo from camera
+    private void uploadPhotoFromCamera(String photoPath) {
+        // Show upload progress
+        binding.uploadProgress.setVisibility(View.VISIBLE);
+        binding.buttonChangeIcon.setEnabled(false);
 
         File photoFile = new File(photoPath);
         Uri photoUri = Uri.fromFile(photoFile);
@@ -109,7 +202,7 @@ public class PetDetailFragment extends Fragment {
         String fileName = "pets/" + petId + "/" + System.currentTimeMillis() + ".jpg";
         StorageReference photoRef = storage.getReference().child(fileName);
 
-        Log.d(TAG, "Uploading photo to: " + fileName);
+        Log.d(TAG, "Uploading camera photo to: " + fileName);
 
         // Upload file
         photoRef.putFile(photoUri)
@@ -126,7 +219,7 @@ public class PetDetailFragment extends Fragment {
                             })
                             .addOnFailureListener(e -> {
                                 binding.uploadProgress.setVisibility(View.GONE);
-                                binding.buttonTakePhoto.setEnabled(true);
+                                binding.buttonChangeIcon.setEnabled(true);
                                 Log.e(TAG, "Failed to get download URL", e);
                                 Toast.makeText(getContext(),
                                         "Failed to get photo URL: " + e.getMessage(),
@@ -135,7 +228,7 @@ public class PetDetailFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> {
                     binding.uploadProgress.setVisibility(View.GONE);
-                    binding.buttonTakePhoto.setEnabled(true);
+                    binding.buttonChangeIcon.setEnabled(true);
                     Log.e(TAG, "Photo upload failed", e);
                     Toast.makeText(getContext(),
                             "Failed to upload photo: " + e.getMessage(),
@@ -171,27 +264,27 @@ public class PetDetailFragment extends Fragment {
                             .add(photo)
                             .addOnSuccessListener(documentReference -> {
                                 binding.uploadProgress.setVisibility(View.GONE);
-                                binding.buttonTakePhoto.setEnabled(true);
+                                binding.buttonChangeIcon.setEnabled(true);
 
                                 Log.d(TAG, "Photo record created successfully");
                                 Toast.makeText(getContext(),
-                                        "Photo uploaded successfully!",
+                                        "Icon updated successfully!",
                                         Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e -> {
                                 binding.uploadProgress.setVisibility(View.GONE);
-                                binding.buttonTakePhoto.setEnabled(true);
+                                binding.buttonChangeIcon.setEnabled(true);
 
                                 Log.e(TAG, "Failed to create photo record", e);
                                 // Photo uploaded but record creation failed
                                 Toast.makeText(getContext(),
-                                        "Photo uploaded but failed to save record",
+                                        "Icon updated but failed to save record",
                                         Toast.LENGTH_LONG).show();
                             });
                 })
                 .addOnFailureListener(e -> {
                     binding.uploadProgress.setVisibility(View.GONE);
-                    binding.buttonTakePhoto.setEnabled(true);
+                    binding.buttonChangeIcon.setEnabled(true);
 
                     Log.e(TAG, "Error updating photo URL", e);
                     Toast.makeText(getContext(),
