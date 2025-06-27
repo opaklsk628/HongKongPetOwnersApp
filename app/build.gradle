@@ -71,6 +71,11 @@ dependencies {
     // Biometric Authentication for Vaccine Records
     implementation 'androidx.biometric:biometric:1.1.0'
 
+    // Google Gemini AI
+    implementation 'com.google.ai.client.generativeai:generativeai:0.1.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
+
     // Testing
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit

@@ -41,6 +41,14 @@
         <action
             android:id="@+id/action_SecondFragment_to_healthRemindersFragment"
             app:destination="@id/healthRemindersFragment" />
+
+        <action
+            android:id="@+id/action_SecondFragment_to_walkingRoutesFragment"
+            app:destination="@id/walkingRoutesFragment" />
+
+        <action
+            android:id="@+id/action_SecondFragment_to_petAIChatFragment"
+            app:destination="@id/petAIChatFragment" />
     </fragment>
 
     <fragment
@@ -64,6 +72,18 @@
         <action
             android:id="@+id/action_petListFragment_to_vaccineRecordsFragment"
             app:destination="@id/vaccineRecordsFragment" />
+
+        <action
+            android:id="@+id/action_petListFragment_to_healthRemindersFragment"
+            app:destination="@id/healthRemindersFragment" />
+
+        <action
+            android:id="@+id/action_petListFragment_to_walkingRoutesFragment"
+            app:destination="@id/walkingRoutesFragment" />
+
+        <action
+            android:id="@+id/action_petListFragment_to_recordWalkingFragment"
+            app:destination="@id/recordWalkingFragment" />
     </fragment>
 
     <fragment
@@ -110,7 +130,6 @@
         android:label="Pet Parks"
         tools:layout="@layout/fragment_pet_parks" />
 
-    <!-- Vaccine Records Section -->
     <fragment
         android:id="@+id/vaccineRecordsFragment"
         android:name="com.example.hongkongpetownersapp.VaccineRecordsFragment"
@@ -138,38 +157,6 @@
         android:label="Vaccine Details"
         tools:layout="@layout/fragment_vaccine_detail" />
 
-    <!-- Health Reminders Section -->
-    <fragment
-        android:id="@+id/healthRemindersFragment"
-        android:name="com.example.hongkongpetownersapp.HealthRemindersFragment"
-        android:label="Health Reminders"
-        tools:layout="@layout/fragment_health_reminders">
-
-        <action
-            android:id="@+id/action_healthRemindersFragment_to_petListFragment"
-            app:destination="@id/petListFragment" />
-
-        <action
-            android:id="@+id/action_petListFragment_to_healthRemindersFragment"
-            app:destination="@id/healthRemindersFragment" />
-
-        <action
-            android:id="@+id/action_healthRemindersFragment_to_reminderDetailFragment"
-            app:destination="@id/reminderDetailFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/addReminderFragment"
-        android:name="com.example.hongkongpetownersapp.AddReminderFragment"
-        android:label="Add Reminder"
-        tools:layout="@layout/fragment_add_reminder" />
-
-    <fragment
-        android:id="@+id/reminderDetailFragment"
-        android:name="com.example.hongkongpetownersapp.ReminderDetailFragment"
-        android:label="Reminder Details"
-        tools:layout="@layout/fragment_reminder_detail" />
-
     <fragment
         android:id="@+id/healthRemindersFragment"
         android:name="com.example.hongkongpetownersapp.HealthRemindersFragment"
@@ -196,5 +183,32 @@
         android:name="com.example.hongkongpetownersapp.HealthReminderDetailFragment"
         android:label="Edit Reminder"
         tools:layout="@layout/fragment_health_reminder_detail" />
+
+    <fragment
+        android:id="@+id/walkingRoutesFragment"
+        android:name="com.example.hongkongpetownersapp.WalkingRoutesFragment"
+        android:label="Walking Routes"
+        tools:layout="@layout/fragment_walking_routes">
+
+        <action
+            android:id="@+id/action_walkingRoutesFragment_to_petListFragment"
+            app:destination="@id/petListFragment" />
+
+        <action
+            android:id="@+id/action_walkingRoutesFragment_to_recordWalkingFragment"
+            app:destination="@id/recordWalkingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recordWalkingFragment"
+        android:name="com.example.hongkongpetownersapp.RecordWalkingFragment"
+        android:label="Record Walking"
+        tools:layout="@layout/fragment_record_walking" />
+
+    <fragment
+        android:id="@+id/petAIChatFragment"
+        android:name="com.example.hongkongpetownersapp.PetAIChatFragment"
+        android:label="Pet AI Assistant"
+        tools:layout="@layout/fragment_pet_ai_chat" />
 
 </navigation>

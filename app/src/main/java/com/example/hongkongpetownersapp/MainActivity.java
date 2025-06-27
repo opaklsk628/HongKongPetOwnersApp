@@ -47,6 +47,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+    // Permission launcher for activity recognition
+    private final ActivityResultLauncher<String> requestActivityRecognitionPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Log.d(TAG, "Activity recognition permission granted");
+                } else {
+                    Log.d(TAG, "Activity recognition permission denied");
+                    Toast.makeText(this,
+                            "Step counting requires activity recognition permission",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +85,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Check and request notification permission
         checkNotificationPermission();
+
+        // Check and request activity recognition permission for step counter
+        checkActivityRecognitionPermission();
     }
 
     private void checkNotificationPermission() {
@@ -81,6 +97,17 @@ public class MainActivity extends AppCompatActivity {
                     != PackageManager.PERMISSION_GRANTED) {
                 // Request permission
                 requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+    }
+
+    private void checkActivityRecognitionPermission() {
+        // For Android 10 (API 29) and above, need activity recognition permission
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Request permission
+                requestActivityRecognitionPermissionLauncher.launch(Manifest.permission.ACTIVITY_RECOGNITION);
             }
         }
     }
@@ -157,8 +184,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changeEmail() {
-        Toast.makeText(this, getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
-        // Implementation for email change would require re-authentication
+        // Show dialog that this feature is not available
+        new AlertDialog.Builder(this)
+                .setTitle("Change Email")
+                .setMessage("This feature is not available yet")
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     private void deleteAccount() {

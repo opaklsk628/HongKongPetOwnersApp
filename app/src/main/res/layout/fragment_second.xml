@@ -199,6 +199,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
                 app:cardElevation="2dp"
                 app:cardCornerRadius="8dp">
 
@@ -208,6 +209,23 @@
                     android:layout_height="wrap_content"
                     android:padding="20dp"
                     android:text="@string/health_reminders"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:background="?attr/selectableItemBackground" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:id="@+id/button_pet_ai"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="@string/pet_ai_assistant"
                     android:textSize="18sp"
                     android:textColor="@color/black"
                     android:background="?attr/selectableItemBackground" />

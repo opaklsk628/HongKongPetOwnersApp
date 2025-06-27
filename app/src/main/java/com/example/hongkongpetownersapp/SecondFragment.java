@@ -107,9 +107,10 @@ public class SecondFragment extends Fragment {
                     .navigate(R.id.action_SecondFragment_to_petListFragment, bundle);
         });
 
-        // Walking Routes - Coming soon
+        // Walking Routes - Navigate to walking routes
         binding.buttonWalkingRoutes.setOnClickListener(v -> {
-            Toast.makeText(getContext(), getString(R.string.feature_coming_soon), Toast.LENGTH_SHORT).show();
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_SecondFragment_to_walkingRoutesFragment);
         });
 
         // Health Reminders - Navigate to health reminders list
@@ -117,6 +118,12 @@ public class SecondFragment extends Fragment {
             // Navigate without pet selection to show all reminders
             NavHostFragment.findNavController(this)
                     .navigate(R.id.action_SecondFragment_to_healthRemindersFragment);
+        });
+
+        // Pet AI Assistant - Navigate to AI chat
+        binding.buttonPetAi.setOnClickListener(v -> {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_SecondFragment_to_petAIChatFragment);
         });
     }
 
